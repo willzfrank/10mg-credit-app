@@ -21,9 +21,10 @@ export function useUpdateTenantConfig(slug: string) {
   const queryClient = useQueryClient()
   const token = useSession(slug)?.accessToken
   return useMutation({
+    meta: { tenantSlug: slug },
     mutationFn: (form: TenantConfigForm) => {
       if (!token) throw new UnauthorizedError()
-      return updateTenantConfig(token, form)
+      return updateTenantConfig(token, slug, form)
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: tenantKeys.config(slug) }),
   })

@@ -4,9 +4,23 @@ import { tenantColorFields, tenantName, tenantSettingsFormSchema } from './types
 
 const PAGE_BACKGROUND = '#ffffff'
 
+function isLogoUrl(value: string): boolean {
+  if (value.startsWith('/')) return !value.startsWith('//')
+  try {
+    const { protocol } = new URL(value)
+    return protocol === 'http:' || protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 export const tenantConfigFormSchema = z.strictObject({
   name: tenantName,
-  logoUrl: z.string().min(1, 'Logo is required'),
+  logoUrl: z
+    .string()
+    .trim()
+    .min(1, 'Logo is required')
+    .refine(isLogoUrl, 'Use an http(s) URL or a path starting with /'),
   colors: z.strictObject(tenantColorFields),
   settings: tenantSettingsFormSchema,
 })

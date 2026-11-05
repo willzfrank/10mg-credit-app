@@ -1,4 +1,4 @@
-import { UnauthorizedError } from '../shared/api/errors'
+import { ForbiddenError, UnauthorizedError } from '../shared/api/errors'
 import type { Role, Session } from '../shared/auth/authStore'
 import { resetTenants } from './tenants'
 
@@ -67,7 +67,7 @@ function persistTokens() {
   try {
     sessionStorage.setItem(TOKENS_KEY, JSON.stringify([...tokens]))
   } catch {
-    // storage unavailable: tokens stay in memory only
+    // Ignore storage write errors (e.g. disabled storage or quota exceeded)
   }
 }
 
@@ -95,6 +95,15 @@ export function authenticateCredentials(slug: string, credentials: { email: stri
 export function authenticateToken(token: string): TokenOwner {
   const owner = tokens.get(token)
   if (!owner) throw new UnauthorizedError()
+  return owner
+}
+
+/** Guard for lender-only operations: the session must be a lender_admin of the target tenant. */
+export function requireLenderAdmin(token: string, tenantSlug: string): TokenOwner {
+  const owner = authenticateToken(token)
+  if (owner.role !== 'lender_admin' || owner.tenantSlug !== tenantSlug) {
+    throw new ForbiddenError('Lender admin access to this tenant required')
+  }
   return owner
 }
 

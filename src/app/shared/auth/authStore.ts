@@ -13,8 +13,6 @@ interface AuthState {
   clearSession: (slug: string) => void
 }
 
-// Mock-only: persisting the access token in sessionStorage (per-tenant key) keeps the demo logged in across
-// reloads. A real app would keep the token in memory and restore the session from an httpOnly refresh cookie.
 const STORAGE_PREFIX = 'session:'
 
 function readStoredSessions(): Map<string, Session> {
@@ -29,7 +27,7 @@ function readStoredSessions(): Map<string, Session> {
       }
     }
   } catch {
-    // storage unavailable or corrupted: start logged out
+    return sessions
   }
   return sessions
 }
@@ -39,7 +37,7 @@ function writeStoredSession(slug: string, session: Session | null) {
     if (session) sessionStorage.setItem(STORAGE_PREFIX + slug, JSON.stringify(session))
     else sessionStorage.removeItem(STORAGE_PREFIX + slug)
   } catch {
-    // storage unavailable: session stays in memory only
+    return
   }
 }
 

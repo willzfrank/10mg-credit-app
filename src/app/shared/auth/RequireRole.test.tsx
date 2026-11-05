@@ -1,27 +1,35 @@
 import { render, screen } from '@testing-library/react'
-import type { ReactNode } from 'react'
+import { MemoryRouter, Route, Routes } from 'react-router'
 import { describe, expect, it } from 'vitest'
-import { mockTenants } from '../../mocks/tenants'
 import { TenantContext } from '../../features/tenant/tenantContext'
+import { mockTenants } from '../../mocks/tenants'
 import { RequireRole } from './RequireRole'
 import { useAuthStore, type Role } from './authStore'
 
-const wrapper = ({ children }: { children: ReactNode }) => (
-  <TenantContext.Provider value={mockTenants.acme}>{children}</TenantContext.Provider>
-)
-
-const signIn = (role: Role) =>
-  useAuthStore.getState().setSession('acme', {
+const signIn = (role: Role, slug = 'acme') =>
+  useAuthStore.getState().setSession(slug, {
     accessToken: 'token',
     user: { id: 'u1', name: 'User', email: 'u@acme.test', role },
   })
 
 const renderGuard = () =>
   render(
-    <RequireRole roles={['lender_admin']} fallback={<p>Not allowed</p>}>
-      <p>Dashboard</p>
-    </RequireRole>,
-    { wrapper },
+    <TenantContext.Provider value={mockTenants.acme}>
+      <MemoryRouter initialEntries={['/admin']}>
+        <Routes>
+          <Route
+            path="/admin"
+            element={
+              <RequireRole roles={['lender_admin']}>
+                <p>Dashboard</p>
+              </RequireRole>
+            }
+          />
+          <Route path="/login" element={<p>Login page</p>} />
+          <Route path="/portal" element={<p>Portal page</p>} />
+        </Routes>
+      </MemoryRouter>
+    </TenantContext.Provider>,
   )
 
 describe('RequireRole', () => {
@@ -29,28 +37,24 @@ describe('RequireRole', () => {
     signIn('lender_admin')
     renderGuard()
     expect(screen.queryByText('Dashboard')).not.toBeNull()
-    expect(screen.queryByText('Not allowed')).toBeNull()
   })
 
-  it('renders the fallback for a disallowed role', () => {
+  it('sends a wrong-role user to their own home', () => {
     signIn('customer')
     renderGuard()
     expect(screen.queryByText('Dashboard')).toBeNull()
-    expect(screen.queryByText('Not allowed')).not.toBeNull()
+    expect(screen.queryByText('Portal page')).not.toBeNull()
   })
 
-  it('renders the fallback when signed out', () => {
+  it('sends a signed-out user to /login', () => {
     renderGuard()
-    expect(screen.queryByText('Dashboard')).toBeNull()
-    expect(screen.queryByText('Not allowed')).not.toBeNull()
+    expect(screen.queryByText('Login page')).not.toBeNull()
   })
 
   it('does not use a session from another tenant', () => {
-    useAuthStore.getState().setSession('zenith', {
-      accessToken: 'token',
-      user: { id: 'u2', name: 'Zed', email: 'zed@zenith.test', role: 'lender_admin' },
-    })
+    signIn('lender_admin', 'zenith')
     renderGuard()
     expect(screen.queryByText('Dashboard')).toBeNull()
+    expect(screen.queryByText('Login page')).not.toBeNull()
   })
 })

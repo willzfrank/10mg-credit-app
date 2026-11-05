@@ -12,13 +12,15 @@ export const tenantColorFields = {
   accent: hexColor.optional(),
 }
 
+const finiteNumber = () => z.number({ error: 'Enter a number' })
+
 export const tenantSettingsFields = {
   currency: z.enum(['NGN', 'USD']),
   locale: z.string().regex(/^[a-z]{2}-[A-Z]{2}$/, 'Use a locale like en-NG'),
-  minLoanAmount: z.number().positive(),
-  maxLoanAmount: z.number().positive(),
-  interestRate: z.number().min(0).max(100),
-  maxTenorMonths: z.number().int().positive(),
+  minLoanAmount: finiteNumber().positive(),
+  maxLoanAmount: finiteNumber().positive(),
+  interestRate: finiteNumber().min(0).max(100),
+  maxTenorMonths: finiteNumber().int().positive(),
 }
 
 const loanRangeCheck = (settings: { minLoanAmount: number; maxLoanAmount: number }) =>

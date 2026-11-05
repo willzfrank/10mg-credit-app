@@ -22,6 +22,13 @@ export class UnauthorizedError extends ApiError {
   }
 }
 
+export class ForbiddenError extends ApiError {
+  constructor(message = 'Forbidden') {
+    super(403, message)
+    this.name = 'ForbiddenError'
+  }
+}
+
 export class ConflictError extends ApiError {
   constructor(message = 'Conflict') {
     super(409, message)
