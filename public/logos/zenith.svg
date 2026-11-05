@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="48" viewBox="0 0 160 48" role="img" aria-label="Zenith Credit">
+  <circle cx="24" cy="24" r="24" fill="#4338ca"/>
+  <path d="M14 15h20l-14 18h14" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="58" y="31" font-family="system-ui, sans-serif" font-size="20" font-weight="600" fill="#1e1b4b">Zenith</text>
+</svg>
