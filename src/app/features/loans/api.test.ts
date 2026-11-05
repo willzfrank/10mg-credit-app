@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../../shared/api/errors'
 import { login } from '../../shared/auth/authApi'
-import { getLoan, listLoans, submitApplication } from './api'
+import { getDashboardSummary } from '../dashboard/api'
+import { getLoan, listLoanRepayments, listLoans, submitApplication } from './api'
 
 const customer = { email: 'chidi@acme.test', password: 'password123' }
 const lender = { email: 'ada@acme.test', password: 'password123' }
@@ -19,7 +20,7 @@ describe('loan visibility', () => {
 
   it('lets a lender_admin see the whole tenant but nothing from other tenants', async () => {
     const { accessToken } = await login('acme', lender)
-    expect((await listLoans(accessToken)).map((l) => l.id)).toEqual(['loan_acme_1', 'loan_acme_2'])
+    expect((await listLoans(accessToken)).map((l) => l.id)).toEqual(Array.from({ length: 7 }, (_, i) => `loan_acme_${i + 1}`))
     expect((await getLoan(accessToken, 'loan_acme_2')).id).toBe('loan_acme_2')
     await expect(getLoan(accessToken, 'loan_zenith_1')).rejects.toBeInstanceOf(NotFoundError)
   })
@@ -27,19 +28,19 @@ describe('loan visibility', () => {
   it('returns copies, so callers cannot mutate stored loans', async () => {
     const { accessToken } = await login('acme', customer)
     const loan = await getLoan(accessToken, 'loan_acme_1')
-    loan.amount = 1
-    expect((await getLoan(accessToken, 'loan_acme_1')).amount).toBe(150000)
+    loan.amountMinor = 1
+    expect((await getLoan(accessToken, 'loan_acme_1')).amountMinor).toBe(15_000_000)
   })
 })
 
 describe('submitApplication', () => {
-  const input = { amount: 100000, tenorMonths: 6, idempotencyKey: 'key-1' }
+  const input = { amountMinor: 10_000_000, tenorMonths: 6, idempotencyKey: 'key-1' }
 
   it('returns the existing record for the same key and body, and conflicts on a different body', async () => {
     const { accessToken } = await login('acme', customer)
     const first = await submitApplication(accessToken, input)
     expect((await submitApplication(accessToken, input)).id).toBe(first.id)
-    await expect(submitApplication(accessToken, { ...input, amount: 120000 })).rejects.toBeInstanceOf(ConflictError)
+    await expect(submitApplication(accessToken, { ...input, amountMinor: 12_000_000 })).rejects.toBeInstanceOf(ConflictError)
     expect((await submitApplication(accessToken, { ...input, idempotencyKey: 'key-2' })).id).not.toBe(first.id)
   })
 
@@ -48,11 +49,50 @@ describe('submitApplication', () => {
     const attempt = (overrides: object) =>
       submitApplication(accessToken, { ...input, idempotencyKey: crypto.randomUUID(), ...overrides })
 
-    await expect(attempt({ amount: 1000 })).rejects.toBeInstanceOf(ValidationError)
-    await expect(attempt({ amount: 9_000_000 })).rejects.toBeInstanceOf(ValidationError)
-    await expect(attempt({ amount: Number.NaN })).rejects.toBeInstanceOf(ValidationError)
+    await expect(attempt({ amountMinor: 100_000 })).rejects.toBeInstanceOf(ValidationError)
+    await expect(attempt({ amountMinor: 900_000_000 })).rejects.toBeInstanceOf(ValidationError)
+    await expect(attempt({ amountMinor: Number.NaN })).rejects.toBeInstanceOf(ValidationError)
+    await expect(attempt({ amountMinor: 10_000_000.5 })).rejects.toBeInstanceOf(ValidationError)
+    await expect(attempt({ amountMinor: 0 })).rejects.toBeInstanceOf(ValidationError)
+    await expect(attempt({ amountMinor: -10_000_000 })).rejects.toBeInstanceOf(ValidationError)
     await expect(attempt({ tenorMonths: 0 })).rejects.toBeInstanceOf(ValidationError)
     await expect(attempt({ tenorMonths: 13 })).rejects.toBeInstanceOf(ValidationError)
     await expect(attempt({ tenorMonths: 2.5 })).rejects.toBeInstanceOf(ValidationError)
+  })
+
+  it('stores a pending loan with tenant, minor-unit amount and a rate snapshot that shows in the lender summary', async () => {
+    const { accessToken } = await login('acme', customer)
+    const admin = (await login('acme', lender)).accessToken
+    const before = await getDashboardSummary(admin)
+
+    const loan = await submitApplication(accessToken, input)
+    expect(loan).toMatchObject({ tenantId: 'tnt_001', amountMinor: 10_000_000, tenorMonths: 6, ratePct: 4.5, status: 'pending' })
+    expect(Number.isNaN(Date.parse(loan.createdAt))).toBe(false)
+
+    const after = await getDashboardSummary(admin)
+    expect(after.applications).toBe(before.applications + 1)
+    expect(Number.isFinite(after.outstandingMinor)).toBe(true)
+  })
+})
+
+describe('customer ownership and idempotency', () => {
+  it('hides another customer’s or tenant’s loan and its repayments', async () => {
+    const { accessToken } = await login('acme', customer)
+    expect((await listLoanRepayments(accessToken, 'loan_acme_1')).length).toBe(4)
+    for (const id of ['loan_acme_3', 'loan_zenith_2', 'missing']) {
+      await expect(getLoan(accessToken, id)).rejects.toBeInstanceOf(NotFoundError)
+      await expect(listLoanRepayments(accessToken, id)).rejects.toBeInstanceOf(NotFoundError)
+    }
+    const dates = (await listLoanRepayments(accessToken, 'loan_acme_1')).map((r) => r.paidAt)
+    expect(dates).toEqual([...dates].sort().reverse())
+  })
+
+  it('creates exactly one loan when the same key is submitted twice at once', async () => {
+    const { accessToken } = await login('acme', customer)
+    const before = (await listLoans(accessToken)).length
+    const input = { amountMinor: 10_000_000, tenorMonths: 6, idempotencyKey: 'double-submit' }
+    const [a, b] = await Promise.all([submitApplication(accessToken, input), submitApplication(accessToken, input)])
+    expect(a.id).toBe(b.id)
+    expect((await listLoans(accessToken)).length).toBe(before + 1)
   })
 })

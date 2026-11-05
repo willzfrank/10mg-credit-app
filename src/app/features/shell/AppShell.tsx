@@ -16,10 +16,10 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
 
   return (
     <div className="min-h-screen">
-      <header className="flex items-center gap-4 border-b px-6 py-3">
+      <header className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b px-4 py-3 sm:px-6">
         <TenantLogo className="h-8 w-auto" />
         <span className="font-semibold">{name}</span>
-        <nav aria-label="Main" className="ml-6 flex gap-4 text-sm">
+        <nav aria-label="Main" className="flex gap-4 text-sm sm:ml-6">
           {nav.map((item) => (
             <NavLink
               key={item.to}
@@ -35,7 +35,7 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
           Sign out
         </Button>
       </header>
-      <main className="mx-auto max-w-3xl p-6">
+      <main className="mx-auto max-w-5xl p-4 sm:p-6">
         <Outlet />
       </main>
     </div>

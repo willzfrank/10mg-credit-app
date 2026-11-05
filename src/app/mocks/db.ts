@@ -1,9 +1,10 @@
 import { ForbiddenError, UnauthorizedError } from '../shared/api/errors'
 import type { Role, Session } from '../shared/auth/authStore'
-import { resetTenants } from './tenants'
+import { mockTenants, resetTenants } from './tenants'
 
-interface MockUser {
+export interface MockUser {
   id: string
+  tenantId: string
   tenantSlug: string
   name: string
   email: string
@@ -11,40 +12,125 @@ interface MockUser {
   role: Role
 }
 
+export type LoanStatus = 'pending' | 'approved' | 'rejected' | 'repaid'
+
 export interface MockLoan {
   id: string
+  tenantId: string
   tenantSlug: string
   userId: string
-  amount: number
-  status: 'pending' | 'approved' | 'repaid'
-}
-
-export interface MockApplication {
-  id: string
-  tenantSlug: string
-  userId: string
-  amount: number
+  /** Principal in integer minor units (kobo / cents). */
+  amountMinor: number
   tenorMonths: number
-  status: 'pending'
-  idempotencyKey: string
+  /** Annual interest rate, in percent. */
+  ratePct: number
+  status: LoanStatus
+  createdAt: string
+  /** Set on loans created through submitApplication, to make retries idempotent. */
+  idempotencyKey?: string
 }
 
-const users: MockUser[] = [
-  { id: 'u_acme_lender', tenantSlug: 'acme', name: 'Ada Obi', email: 'ada@acme.test', password: 'password123', role: 'lender_admin' },
-  { id: 'u_acme_customer', tenantSlug: 'acme', name: 'Chidi Eze', email: 'chidi@acme.test', password: 'password123', role: 'customer' },
-  { id: 'u_zenith_lender', tenantSlug: 'zenith', name: 'Zed Park', email: 'zed@zenith.test', password: 'password123', role: 'lender_admin' },
-  { id: 'u_zenith_customer', tenantSlug: 'zenith', name: 'Zoe Lin', email: 'zoe@zenith.test', password: 'password123', role: 'customer' },
+export interface MockRepayment {
+  id: string
+  tenantId: string
+  loanId: string
+  amountMinor: number
+  paidAt: string
+}
+
+const tenantIdOf = (slug: string) => mockTenants[slug].id
+
+const seedUser = (id: string, tenantSlug: string, name: string, email: string, role: Role): MockUser => ({
+  id,
+  tenantId: tenantIdOf(tenantSlug),
+  tenantSlug,
+  name,
+  email,
+  password: 'password123',
+  role,
+})
+
+export const mockUsers: MockUser[] = [
+  seedUser('u_acme_lender', 'acme', 'Ada Obi', 'ada@acme.test', 'lender_admin'),
+  seedUser('u_acme_customer', 'acme', 'Chidi Eze', 'chidi@acme.test', 'customer'),
+  seedUser('u_acme_other', 'acme', 'Bola Ade', 'bola@acme.test', 'customer'),
+  seedUser('u_acme_emeka', 'acme', 'Emeka Nwosu', 'emeka@acme.test', 'customer'),
+  seedUser('u_zenith_lender', 'zenith', 'Zed Park', 'zed@zenith.test', 'lender_admin'),
+  seedUser('u_zenith_customer', 'zenith', 'Zoe Lin', 'zoe@zenith.test', 'customer'),
+  seedUser('u_zenith_ravi', 'zenith', 'Ravi Shah', 'ravi@zenith.test', 'customer'),
+  seedUser('u_zenith_mina', 'zenith', 'Mina Cole', 'mina@zenith.test', 'customer'),
 ]
 
+const loan = (
+  id: string,
+  tenantSlug: string,
+  userId: string,
+  amountMajor: number,
+  tenorMonths: number,
+  status: LoanStatus,
+  createdAt: string,
+): MockLoan => ({
+  id,
+  tenantId: tenantIdOf(tenantSlug),
+  tenantSlug,
+  userId,
+  amountMinor: Math.round(amountMajor * 100),
+  tenorMonths,
+  ratePct: mockTenants[tenantSlug].settings.interestRate,
+  status,
+  createdAt,
+})
+
 const seedLoans: MockLoan[] = [
-  { id: 'loan_acme_1', tenantSlug: 'acme', userId: 'u_acme_customer', amount: 150000, status: 'approved' },
-  { id: 'loan_acme_2', tenantSlug: 'acme', userId: 'u_acme_other', amount: 80000, status: 'pending' },
-  { id: 'loan_zenith_1', tenantSlug: 'zenith', userId: 'u_zenith_customer', amount: 4200, status: 'pending' },
+  loan('loan_acme_1', 'acme', 'u_acme_customer', 150000, 12, 'approved', '2026-01-10T09:00:00.000Z'),
+  loan('loan_acme_2', 'acme', 'u_acme_other', 80000, 6, 'pending', '2026-10-20T09:00:00.000Z'),
+  loan('loan_acme_3', 'acme', 'u_acme_other', 200000, 9, 'approved', '2026-02-14T09:00:00.000Z'),
+  loan('loan_acme_4', 'acme', 'u_acme_other', 60000, 3, 'rejected', '2026-03-01T09:00:00.000Z'),
+  loan('loan_acme_5', 'acme', 'u_acme_emeka', 100000, 6, 'repaid', '2025-11-05T09:00:00.000Z'),
+  loan('loan_acme_6', 'acme', 'u_acme_emeka', 300000, 12, 'approved', '2026-04-18T09:00:00.000Z'),
+  loan('loan_acme_7', 'acme', 'u_acme_emeka', 120000, 6, 'pending', '2026-10-28T09:00:00.000Z'),
+  loan('loan_zenith_1', 'zenith', 'u_zenith_customer', 4200, 12, 'pending', '2026-10-25T09:00:00.000Z'),
+  loan('loan_zenith_2', 'zenith', 'u_zenith_customer', 3000, 6, 'approved', '2026-02-02T09:00:00.000Z'),
+  loan('loan_zenith_3', 'zenith', 'u_zenith_ravi', 10000, 12, 'approved', '2026-03-12T09:00:00.000Z'),
+  loan('loan_zenith_4', 'zenith', 'u_zenith_ravi', 1500, 3, 'rejected', '2026-04-04T09:00:00.000Z'),
+  loan('loan_zenith_5', 'zenith', 'u_zenith_mina', 800, 3, 'repaid', '2025-12-01T09:00:00.000Z'),
+  loan('loan_zenith_6', 'zenith', 'u_zenith_mina', 5000, 12, 'approved', '2026-05-09T09:00:00.000Z'),
+  loan('loan_zenith_7', 'zenith', 'u_zenith_ravi', 2500, 6, 'pending', '2026-10-30T09:00:00.000Z'),
 ]
 
 export const mockLoans: MockLoan[] = structuredClone(seedLoans)
 
-export const mockApplications: MockApplication[] = []
+const repayment = (tenantSlug: string, loanId: string, n: number, amountMinor: number, paidAt: string): MockRepayment => ({
+  id: `rep_${loanId}_${n}`,
+  tenantId: tenantIdOf(tenantSlug),
+  loanId,
+  amountMinor,
+  paidAt,
+})
+
+const seedRepayments: MockRepayment[] = [
+  repayment('acme', 'loan_acme_1', 1, 1_000_000, '2026-02-10T10:00:00.000Z'),
+  repayment('acme', 'loan_acme_1', 2, 1_000_000, '2026-03-10T10:00:00.000Z'),
+  repayment('acme', 'loan_acme_1', 3, 1_000_000, '2026-04-10T10:00:00.000Z'),
+  repayment('acme', 'loan_acme_1', 4, 1_000_000, '2026-05-10T10:00:00.000Z'),
+  repayment('acme', 'loan_acme_3', 1, 2_500_000, '2026-03-14T10:00:00.000Z'),
+  repayment('acme', 'loan_acme_3', 2, 2_500_000, '2026-04-14T10:00:00.000Z'),
+  repayment('acme', 'loan_acme_6', 1, 3_000_000, '2026-05-18T10:00:00.000Z'),
+  repayment('acme', 'loan_acme_6', 2, 3_000_000, '2026-06-18T10:00:00.000Z'),
+  repayment('acme', 'loan_acme_5', 1, 5_000_000, '2025-12-05T10:00:00.000Z'),
+  repayment('acme', 'loan_acme_5', 2, 5_225_000, '2026-01-05T10:00:00.000Z'),
+  repayment('zenith', 'loan_zenith_2', 1, 20_000, '2026-03-02T10:00:00.000Z'),
+  repayment('zenith', 'loan_zenith_2', 2, 20_000, '2026-04-02T10:00:00.000Z'),
+  repayment('zenith', 'loan_zenith_2', 3, 20_000, '2026-05-02T10:00:00.000Z'),
+  repayment('zenith', 'loan_zenith_3', 1, 80_000, '2026-04-12T10:00:00.000Z'),
+  repayment('zenith', 'loan_zenith_3', 2, 80_000, '2026-05-12T10:00:00.000Z'),
+  repayment('zenith', 'loan_zenith_3', 3, 80_000, '2026-06-12T10:00:00.000Z'),
+  repayment('zenith', 'loan_zenith_6', 1, 40_000, '2026-06-09T10:00:00.000Z'),
+  repayment('zenith', 'loan_zenith_6', 2, 40_000, '2026-07-09T10:00:00.000Z'),
+  repayment('zenith', 'loan_zenith_5', 1, 81_600, '2026-01-01T10:00:00.000Z'),
+]
+
+export const mockRepayments: MockRepayment[] = structuredClone(seedRepayments)
 
 export interface TokenOwner {
   tenantSlug: string
@@ -81,7 +167,7 @@ function randomId(): string {
 const toPublicUser = ({ id, name, email, role }: MockUser) => ({ id, name, email, role })
 
 export function authenticateCredentials(slug: string, credentials: { email: string; password: string }): Session {
-  const user = users.find(
+  const user = mockUsers.find(
     (u) => u.tenantSlug === slug && u.email === credentials.email && u.password === credentials.password,
   )
   if (!user) throw new UnauthorizedError('Invalid email or password')
@@ -114,7 +200,7 @@ export function revokeToken(token: string) {
 
 export function resetDb() {
   mockLoans.splice(0, mockLoans.length, ...structuredClone(seedLoans))
-  mockApplications.length = 0
+  mockRepayments.splice(0, mockRepayments.length, ...structuredClone(seedRepayments))
   tokens.clear()
   persistTokens()
   resetTenants()
