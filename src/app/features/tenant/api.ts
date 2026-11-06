@@ -1,5 +1,6 @@
 import { requireLenderAdmin } from '../../mocks/db'
 import { delay } from '../../mocks/delay'
+import { saveDb } from '../../mocks/persist'
 import { mockTenants } from '../../mocks/tenants'
 import { NotFoundError } from '../../shared/api/errors'
 import type { TenantConfigForm } from './configFormSchema'
@@ -16,5 +17,6 @@ export async function updateTenantConfig(token: string, slug: string, form: Tena
   requireLenderAdmin(token, slug)
   const updated = tenantConfigSchema.parse({ ...mockTenants[slug], ...form })
   mockTenants[slug] = updated
+  saveDb()
   return structuredClone(updated)
 }

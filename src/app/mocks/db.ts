@@ -1,5 +1,6 @@
 import { ForbiddenError, UnauthorizedError } from '../shared/api/errors'
 import type { Role, Session } from '../shared/auth/authStore'
+import { loadDb, clearDb } from './persist'
 import { mockTenants, resetTenants } from './tenants'
 
 interface MockUser {
@@ -199,9 +200,13 @@ export function revokeToken(token: string) {
 }
 
 export function resetDb() {
+  clearDb()
   mockLoans.splice(0, mockLoans.length, ...structuredClone(seedLoans))
   mockRepayments.splice(0, mockRepayments.length, ...structuredClone(seedRepayments))
   tokens.clear()
   persistTokens()
   resetTenants()
 }
+
+// Restore persisted state over the seed, in place so the exported references never change.
+loadDb()

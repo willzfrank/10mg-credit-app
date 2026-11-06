@@ -1,5 +1,6 @@
 import { authenticateToken, mockLoans, mockRepayments, type MockLoan, type MockRepayment, type TokenOwner } from '../../mocks/db'
 import { delay } from '../../mocks/delay'
+import { saveDb } from '../../mocks/persist'
 import { mockTenants } from '../../mocks/tenants'
 import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '../../shared/api/errors'
 import { outstandingMinor } from './money'
@@ -74,6 +75,7 @@ export async function makeRepayment(token: string, loanId: string, input: Repaym
   }
   mockRepayments.push(repayment)
   if (amountMinor === outstanding) loan.status = 'repaid'
+  saveDb()
   return structuredClone(repayment)
 }
 
@@ -117,5 +119,6 @@ export async function submitApplication(token: string, input: ApplicationInput):
     idempotencyKey: input.idempotencyKey,
   }
   mockLoans.push(application)
+  saveDb()
   return structuredClone(application)
 }

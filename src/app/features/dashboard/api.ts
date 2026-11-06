@@ -1,5 +1,6 @@
 import { authenticateToken, mockLoans, mockRepayments, mockUsers, type MockLoan, type TokenOwner } from '../../mocks/db'
 import { delay } from '../../mocks/delay'
+import { saveDb } from '../../mocks/persist'
 import { mockTenants } from '../../mocks/tenants'
 import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '../../shared/api/errors'
 import { outstandingMinor } from '../loans/money'
@@ -90,5 +91,6 @@ export async function decideLoan(token: string, loanId: string, decision: 'appro
   if (!loan) throw new NotFoundError()
   if (loan.status !== 'pending') throw new ConflictError(`Loan is already ${loan.status}`)
   loan.status = decision
+  saveDb()
   return structuredClone(loan)
 }

@@ -19,6 +19,7 @@ if (typeof window.matchMedia !== 'function') {
 }
 
 beforeEach(() => {
+  localStorage.clear()
   sessionStorage.clear()
   resetDb()
   useAuthStore.setState({ sessions: new Map() })
