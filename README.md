@@ -2,6 +2,12 @@
 
 Frontend for a multi-tenant lending platform built with React, TypeScript, and Vite. Each lender gets its own branding, theme colors, and loan settings.
 
+## Live Demo
+
+Deployed on AWS Amplify: https://main.d1v9au6owp5356.amplifyapp.com/login/
+
+Append `?tenant=acme` or `?tenant=zenith` to switch lenders (see Demo Accounts below).
+
 ## Getting Started
 
 ```bash
