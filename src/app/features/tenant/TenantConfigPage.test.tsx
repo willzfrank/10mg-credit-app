@@ -49,7 +49,7 @@ describe('TenantConfigPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(await screen.findByText('Enter a number')).not.toBeNull()
-    expect(screen.queryByText('Use an http(s) URL or a path starting with /')).not.toBeNull()
+    expect(screen.queryByText('Use an http(s) URL, a path starting with /, or upload an image (max 200 KB)')).not.toBeNull()
     expect(screen.queryByText('Saving…')).toBeNull()
     expect(mockTenants.acme.logoUrl).toBe('/logos/acme.svg')
   })

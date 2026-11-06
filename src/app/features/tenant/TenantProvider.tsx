@@ -1,12 +1,13 @@
 import { useLayoutEffect, useMemo, type ReactNode } from 'react'
 import { NotFoundError } from '../../shared/api/errors'
+import { LoadingScreen } from '../../shared/LoadingScreen'
 import { applyTheme } from './applyTheme'
 import { resolveTenantSlug } from './resolveTenantSlug'
 import { TenantContext } from './tenantContext'
 import { useTenantConfig } from './useTenantConfig'
 
 interface StatusScreenProps {
-  role: 'status' | 'alert'
+  role: 'alert'
   title: string
   message?: string
   children?: ReactNode
@@ -63,5 +64,5 @@ export function TenantProvider({ children }: { children: ReactNode }) {
     )
   }
 
-  return <StatusScreen role="status" title="Loading…" />
+  return <LoadingScreen />
 }

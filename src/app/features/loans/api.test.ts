@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../../shared/api/errors'
+import { ConflictError, ForbiddenError, NotFoundError, UnauthorizedError, ValidationError } from '../../shared/api/errors'
 import { login } from '../../shared/auth/authApi'
 import { getDashboardSummary } from '../dashboard/api'
-import { getLoan, listLoanRepayments, listLoans, submitApplication } from './api'
+import { getLoan, listLoanRepayments, listLoans, makeRepayment, submitApplication } from './api'
+import { outstandingMinor } from './money'
 
 const customer = { email: 'chidi@acme.test', password: 'password123' }
 const lender = { email: 'ada@acme.test', password: 'password123' }
@@ -94,5 +95,56 @@ describe('customer ownership and idempotency', () => {
     const [a, b] = await Promise.all([submitApplication(accessToken, input), submitApplication(accessToken, input)])
     expect(a.id).toBe(b.id)
     expect((await listLoans(accessToken)).length).toBe(before + 1)
+  })
+})
+
+describe('makeRepayment', () => {
+  // loan_acme_1: total payable 15,675,000 minus 4,000,000 already paid = 11,675,000 outstanding.
+  it('records a repayment and reduces the outstanding balance', async () => {
+    const { accessToken } = await login('acme', customer)
+    const repayment = await makeRepayment(accessToken, 'loan_acme_1', { amountMinor: 1_000_000 })
+    expect(repayment).toMatchObject({ loanId: 'loan_acme_1', tenantId: 'tnt_001', amountMinor: 1_000_000 })
+
+    const loan = await getLoan(accessToken, 'loan_acme_1')
+    const rows = await listLoanRepayments(accessToken, 'loan_acme_1')
+    expect(rows).toHaveLength(5)
+    expect(outstandingMinor(loan, rows)).toBe(10_675_000)
+    expect(loan.status).toBe('approved')
+  })
+
+  it('marks the loan repaid when the balance is cleared and then refuses further payments', async () => {
+    const { accessToken } = await login('acme', customer)
+    await makeRepayment(accessToken, 'loan_acme_1', { amountMinor: 11_675_000 })
+    const loan = await getLoan(accessToken, 'loan_acme_1')
+    expect(loan.status).toBe('repaid')
+    expect(outstandingMinor(loan, await listLoanRepayments(accessToken, 'loan_acme_1'))).toBe(0)
+    await expect(makeRepayment(accessToken, 'loan_acme_1', { amountMinor: 100 })).rejects.toBeInstanceOf(ConflictError)
+  })
+
+  it('rejects overpayment and invalid amounts', async () => {
+    const { accessToken } = await login('acme', customer)
+    for (const amountMinor of [11_675_001, 0, -5, 10.5, Number.NaN]) {
+      await expect(makeRepayment(accessToken, 'loan_acme_1', { amountMinor })).rejects.toBeInstanceOf(ValidationError)
+    }
+    expect(await listLoanRepayments(accessToken, 'loan_acme_1')).toHaveLength(4)
+  })
+
+  it('only lets the borrower repay an approved loan', async () => {
+    const { accessToken } = await login('acme', customer)
+    await expect(makeRepayment(accessToken, 'loan_acme_3', { amountMinor: 100 })).rejects.toBeInstanceOf(NotFoundError)
+    await expect(makeRepayment(accessToken, 'loan_zenith_2', { amountMinor: 100 })).rejects.toBeInstanceOf(NotFoundError)
+    const { accessToken: bola } = await login('acme', { email: 'bola@acme.test', password: 'password123' })
+    await expect(makeRepayment(bola, 'loan_acme_2', { amountMinor: 100 })).rejects.toBeInstanceOf(ConflictError)
+    const { accessToken: admin } = await login('acme', lender)
+    await expect(makeRepayment(admin, 'loan_acme_1', { amountMinor: 100 })).rejects.toBeInstanceOf(ForbiddenError)
+    await expect(makeRepayment('bad-token', 'loan_acme_1', { amountMinor: 100 })).rejects.toBeInstanceOf(UnauthorizedError)
+  })
+
+  it('shows up in the lender dashboard totals', async () => {
+    const { accessToken } = await login('acme', customer)
+    const admin = (await login('acme', lender)).accessToken
+    const before = await getDashboardSummary(admin)
+    await makeRepayment(accessToken, 'loan_acme_1', { amountMinor: 1_000_000 })
+    expect((await getDashboardSummary(admin)).outstandingMinor).toBe(before.outstandingMinor - 1_000_000)
   })
 })

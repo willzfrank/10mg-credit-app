@@ -4,7 +4,12 @@ import { tenantColorFields, tenantName, tenantSettingsFormSchema } from './types
 
 const PAGE_BACKGROUND = '#ffffff'
 
+/** Uploaded logos are stored as data URLs; cap the encoded size so the mock store stays small. */
+export const MAX_LOGO_BYTES = 200 * 1024
+const LOGO_DATA_URL = /^data:image\/(png|jpeg|webp|gif|svg\+xml);base64,[a-z0-9+/]+=*$/i
+
 function isLogoUrl(value: string): boolean {
+  if (value.startsWith('data:')) return LOGO_DATA_URL.test(value) && value.length <= Math.ceil((MAX_LOGO_BYTES * 4) / 3) + 64
   if (value.startsWith('/')) return !value.startsWith('//')
   try {
     const { protocol } = new URL(value)
@@ -20,7 +25,7 @@ export const tenantConfigFormSchema = z.strictObject({
     .string()
     .trim()
     .min(1, 'Logo is required')
-    .refine(isLogoUrl, 'Use an http(s) URL or a path starting with /'),
+    .refine(isLogoUrl, 'Use an http(s) URL, a path starting with /, or upload an image (max 200 KB)'),
   colors: z.strictObject(tenantColorFields),
   settings: tenantSettingsFormSchema,
 })

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from 'react'
 import { Controller, useForm, useWatch, type UseFormRegister, type UseFormSetValue, type Control } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { StatusBadge } from '../portal/StatusBadge'
 import { applyTheme } from './applyTheme'
 import { getPrimaryContrastWarning, tenantConfigFormSchema, type TenantConfigForm } from './configFormSchema'
+import { readLogoFile } from './readLogoFile'
 import { hexColor, type TenantColors, type TenantConfig } from './types'
 import { useTenant } from './useTenant'
 import { useUpdateTenantConfig } from './useTenantConfig'
@@ -79,6 +80,13 @@ function ColorField({
   )
 }
 
+/** Shows the logo being edited; falls back to a brand-coloured dot while it is empty or fails to load. */
+function PreviewLogo({ src }: { src: string | undefined }) {
+  const [failed, setFailed] = useState(false)
+  if (!src || failed) return <span className="size-2 rounded-full bg-primary" />
+  return <img src={src} alt="" className="h-6 max-w-24 object-contain" onError={() => setFailed(true)} />
+}
+
 const PRESET_PALETTES = [
   { label: 'Teal', primary: '#0f766e', secondary: '#fcd34d', accent: '#ccfbf1' },
   { label: 'Indigo', primary: '#4338ca', secondary: '#a5b4fc', accent: '#e0e7ff' },
@@ -105,6 +113,9 @@ export function TenantConfigPage() {
   const secondary = useWatch({ control, name: 'colors.secondary' })
   const accent = useWatch({ control, name: 'colors.accent' })
   const watchedName = useWatch({ control, name: 'name' })
+  const watchedLogo = useWatch({ control, name: 'logoUrl' })
+  const fileInput = useRef<HTMLInputElement>(null)
+  const [uploadError, setUploadError] = useState<string | null>(null)
   const watchedCurrency = useWatch({ control, name: 'settings.currency' })
   const watchedRate = useWatch({ control, name: 'settings.interestRate' })
 
@@ -114,6 +125,20 @@ export function TenantConfigPage() {
     applyTheme({ ...tenant, colors })
     return () => applyTheme(tenant)
   }, [tenant, primary, secondary, accent])
+
+  const isUploadedLogo = watchedLogo?.startsWith('data:') ?? false
+
+  const onLogoFile = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+    try {
+      setValue('logoUrl', await readLogoFile(file), { shouldDirty: true, shouldValidate: true })
+      setUploadError(null)
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : 'Could not upload that logo')
+    }
+  }
 
   const contrastWarning = hexColor.safeParse(primary).success ? getPrimaryContrastWarning(primary) : null
 
@@ -161,9 +186,42 @@ export function TenantConfigPage() {
                   <Input className="h-8 text-xs" {...register('name')} />
                 </Field>
 
-                <Field label="Logo URL" error={errors.logoUrl?.message}>
-                  <Input className="h-8 text-xs font-mono" {...register('logoUrl')} />
-                </Field>
+                <div className="flex flex-col gap-1.5">
+                  <Field label="Logo URL" error={errors.logoUrl?.message}>
+                    <Input
+                      className="h-8 text-xs font-mono"
+                      placeholder={isUploadedLogo ? 'Uploaded image' : 'https://… or /logo.svg'}
+                      {...register('logoUrl')}
+                      value={isUploadedLogo ? '' : (watchedLogo ?? '')}
+                    />
+                  </Field>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <input
+                      ref={fileInput}
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"
+                      aria-label="Upload logo"
+                      className="sr-only"
+                      onChange={onLogoFile}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => fileInput.current?.click()}
+                      className="h-8 px-3 text-xs cursor-pointer"
+                    >
+                      Upload logo
+                    </Button>
+                    <span className="text-[11px] text-muted-foreground">
+                      {isUploadedLogo ? 'Using uploaded image. ' : ''}PNG, JPEG, WebP, GIF or SVG, up to 200 KB.
+                    </span>
+                  </div>
+                  {uploadError && (
+                    <span role="alert" className="text-xs text-destructive">
+                      {uploadError}
+                    </span>
+                  )}
+                </div>
 
                 {/* Color Presets */}
                 <div className="flex flex-col gap-1.5 pt-1">
@@ -316,8 +374,9 @@ export function TenantConfigPage() {
           </div>
 
           {/* Right Column: Live Portal & Branding Preview (5 cols) */}
-          <div className="lg:col-span-5 flex flex-col gap-4">
-            <Card className="border border-border bg-card shadow-2xs sticky top-20">
+          {/* On mobile the preview comes first so changes are visible right away */}
+          <div className="order-first lg:order-none lg:col-span-5 flex flex-col gap-4">
+            <Card className="border border-border bg-card shadow-2xs lg:sticky lg:top-20">
               <CardHeader className="p-4 border-b border-border bg-muted/30">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -336,7 +395,7 @@ export function TenantConfigPage() {
                 <div className="rounded-lg border border-border bg-background p-4 shadow-2xs flex flex-col gap-3">
                   <div className="flex items-center justify-between border-b border-border/60 pb-2.5">
                     <div className="flex items-center gap-2">
-                      <span className="size-2 rounded-full bg-primary" />
+                      <PreviewLogo key={watchedLogo} src={watchedLogo} />
                       <span className="font-semibold text-xs text-foreground">
                         {watchedName || tenant.name}
                       </span>

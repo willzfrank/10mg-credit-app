@@ -4,6 +4,7 @@ import {
   ChevronsUpDownIcon,
   LogOutIcon,
 } from 'lucide-react'
+import { Suspense } from 'react'
 import { Link, Outlet, useLocation, useMatch, useNavigate } from 'react-router'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -17,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Sidebar,
   SidebarContent,
@@ -31,6 +33,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar,
 } from '@/components/ui/sidebar'
 import { ThemeToggle } from '../../shared/theme/ThemeToggle'
 import { logout } from '../../shared/auth/authApi'
@@ -55,11 +58,12 @@ const initials = (name: string) =>
 
 function NavButton({ item }: { item: NavItem }) {
   const active = !!useMatch({ path: item.to, end: true })
+  const { setOpenMobile } = useSidebar()
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
         isActive={active}
-        render={<Link to={item.to} aria-current={active ? 'page' : undefined} />}
+        render={<Link to={item.to} aria-current={active ? 'page' : undefined} onClick={() => setOpenMobile(false)} />}
         className={`h-8 px-2.5 rounded-md text-xs font-medium transition-colors ${
           active
             ? 'bg-primary text-primary-foreground font-semibold'
@@ -213,7 +217,18 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
         </header>
 
         <main className="flex-1 w-full max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-          <Outlet />
+          <Suspense
+            fallback={
+              <div role="status" className="flex flex-col gap-2.5 py-4">
+                <span className="sr-only">Loading…</span>
+                <Skeleton className="h-9 w-full rounded" />
+                <Skeleton className="h-9 w-full rounded" />
+                <Skeleton className="h-9 w-2/3 rounded" />
+              </div>
+            }
+          >
+            <Outlet />
+          </Suspense>
         </main>
       </SidebarInset>
     </SidebarProvider>

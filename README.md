@@ -50,10 +50,10 @@ Credentials only work on their own tenant. Lender admins land on `/admin`, custo
 
 - `/login`: tenant-branded sign in
 - `/admin`: KPI cards plus Applications, Customers and Repayments tabs (approve or reject pending applications)
-- `/admin/settings`: edit name, logo URL, three colours and loan settings, with a live preview
+- `/admin/settings`: edit name, logo (URL or image upload), three colours and loan settings, with a live preview that sits above the form on mobile
 - `/portal`: my loans
 - `/portal/apply`: loan application form
-- `/portal/loans/:id`: loan details, status timeline and repayment history
+- `/portal/loans/:id`: loan details, status timeline, repayment history and a form to make repayments
 
 ## Architecture
 
@@ -67,11 +67,21 @@ Credentials only work on their own tenant. Lender admins land on `/admin`, custo
 
 **Money.** All amounts are integer minor units (kobo or cents). `formatMoney` is the one place they are converted for display. Total payable is principal plus simple annual interest pro-rated by tenor; outstanding is total payable minus repayments and is computed, never stored.
 
+**Repayments.** `makeRepayment` lets a customer pay their own approved loan. It rejects non-positive, fractional-minor-unit and over-balance amounts, and the payment that clears the balance moves the loan to `repaid`. The portal and lender dashboard queries are invalidated afterwards, so outstanding balances and repayment activity update in both places.
+
+**Logo upload.** The settings page reads a chosen PNG, JPEG, WebP, GIF or SVG file (up to 200 KB) into a data URL and stores it in `logoUrl`, next to the URL option. The same zod schema validates both forms, and the live preview shows the logo before saving.
+
+**Code splitting.** Each page is loaded with `React.lazy` behind a `Suspense` boundary in `App.tsx`, so the initial bundle only carries the shell and the page being visited.
+
 **Idempotent applications.** `submitApplication` takes an idempotency key. Repeating the same key and body returns the original loan; the same key with a different body is a `ConflictError`.
+
+## Responsiveness
+
+Layouts have been checked and fixed for phone, tablet and desktop widths. Tables become card lists on small screens, the sidebar collapses into a sheet, and on the settings page the live preview is shown above the form on mobile so edits are visible straight away.
 
 ## Decisions and trade-offs
 
-- **Vite**: there is no server rendering requirement, and Vite gives fast dev startup and a plain static build that any static host can serve.
+- **Vite over Next.js**: both are on the preferred list. This app is an authenticated dashboard and portal behind a login, so there are no public pages that need SEO or server rendering, and no server code to run. Vite gives fast dev startup and a plain static build that any static host can serve. Moving to Next.js later would mainly mean swapping the router and tenant resolution for middleware.
 - **Plain mock functions instead of MSW**: no service worker and no extra dependency, and tests call the same functions the UI does. The cost is that nothing exercises real HTTP (status codes, headers, serialisation).
 - **Session in `sessionStorage`**: the zustand store is the source of truth at runtime and mirrors each session to `sessionStorage` so a reload keeps you signed in. The mock token table is mirrored the same way so those tokens still validate. The mirroring in `mocks/db.ts` exists only because the "server" lives in the page; a real backend would not need it.
 - **Status filter in the browser**: the loan list is fetched once and filtered client-side. With pagination the filter would move to the server and into the query key.
@@ -89,9 +99,9 @@ Credentials only work on their own tenant. Lender admins land on `/admin`, custo
 ## Known limitations
 
 - Loans, repayments and tenant config edits live in memory and reset on a full reload. Only sessions and the mock token table survive it.
-- Customers can apply but cannot make repayments; repayments are seed data.
 - No pagination, search, sorting, export or charts.
 - The contrast warning checks the primary colour against white only.
-- The live preview covers colours; name and logo changes show only after saving.
+- Uploaded logos are stored as data URLs in memory. A real backend would store the file in object storage (for example S3) and save its URL.
 - Authentication is a mock: plain-text passwords and no refresh or expiry.
-- Tests cover the API layer and key flows. There are no tests for the login page, and the responsive layout (including 375 px) has not been verified in a browser.
+- Tests cover the API layer and key flows in jsdom. They do not check visual layout; responsiveness was checked by hand in the browser.
+- Repayments are recorded instantly with no payment provider, and there is no repayment schedule or late fees.

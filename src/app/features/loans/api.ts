@@ -1,7 +1,8 @@
 import { authenticateToken, mockLoans, mockRepayments, type MockLoan, type MockRepayment, type TokenOwner } from '../../mocks/db'
 import { delay } from '../../mocks/delay'
 import { mockTenants } from '../../mocks/tenants'
-import { ConflictError, NotFoundError, ValidationError } from '../../shared/api/errors'
+import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '../../shared/api/errors'
+import { outstandingMinor } from './money'
 
 export interface ApplicationInput {
   /** Integer minor units (kobo / cents). */
@@ -37,6 +38,43 @@ export async function listLoans(token: string): Promise<MockLoan[]> {
   await delay()
   const owner = authenticateToken(token)
   return mockLoans.filter((loan) => canSee(owner, loan)).map((loan) => structuredClone(loan))
+}
+
+export interface RepaymentInput {
+  /** Integer minor units (kobo / cents). */
+  amountMinor: number
+}
+
+/**
+ * Records a repayment on the caller's own approved loan. Overpaying is rejected, and the
+ * repayment that clears the balance moves the loan to 'repaid'.
+ */
+export async function makeRepayment(token: string, loanId: string, input: RepaymentInput): Promise<MockRepayment> {
+  await delay()
+  const owner = authenticateToken(token)
+  if (owner.role !== 'customer') throw new ForbiddenError('Only the borrower can make a repayment')
+  const loan = mockLoans.find((l) => l.id === loanId)
+  if (!loan || !canSee(owner, loan)) throw new NotFoundError()
+  if (loan.status !== 'approved') throw new ConflictError(`Loan is ${loan.status}, so it cannot be repaid`)
+
+  const { amountMinor } = input
+  if (!Number.isInteger(amountMinor) || amountMinor <= 0) {
+    throw new ValidationError('Amount must be a positive whole number of minor units')
+  }
+  const loanRepayments = mockRepayments.filter((r) => r.tenantId === loan.tenantId && r.loanId === loan.id)
+  const outstanding = outstandingMinor(loan, loanRepayments)
+  if (amountMinor > outstanding) throw new ValidationError('Amount is more than the outstanding balance')
+
+  const repayment: MockRepayment = {
+    id: `rep_${loan.id}_${loanRepayments.length + 1}`,
+    tenantId: loan.tenantId,
+    loanId: loan.id,
+    amountMinor,
+    paidAt: new Date().toISOString(),
+  }
+  mockRepayments.push(repayment)
+  if (amountMinor === outstanding) loan.status = 'repaid'
+  return structuredClone(repayment)
 }
 
 export async function submitApplication(token: string, input: ApplicationInput): Promise<MockLoan> {

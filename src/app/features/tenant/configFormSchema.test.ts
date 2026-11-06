@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getPrimaryContrastWarning, tenantConfigFormSchema } from './configFormSchema'
+import { getPrimaryContrastWarning, MAX_LOGO_BYTES, tenantConfigFormSchema } from './configFormSchema'
 import { contrastRatio, getReadableForeground } from './getReadableForeground'
 import { mockTenants } from '../../mocks/tenants'
 
@@ -39,5 +39,21 @@ describe('tenantConfigFormSchema', () => {
     expect(tenantConfigFormSchema.safeParse(withSettings({ locale: 'en_NG' })).success).toBe(false)
     expect(tenantConfigFormSchema.safeParse(withSettings({ minLoanAmount: 100, maxLoanAmount: 50 })).success).toBe(false)
     expect(tenantConfigFormSchema.safeParse(withSettings({ minLoanAmount: 100, maxLoanAmount: 100 })).success).toBe(true)
+  })
+})
+
+describe('logo validation', () => {
+  const png = 'data:image/png;base64,iVBORw0KGgo='
+  it('accepts http(s) URLs, root paths and small image data URLs', () => {
+    for (const logoUrl of ['https://x.test/logo.png', '/logo.svg', png]) {
+      expect(tenantConfigFormSchema.safeParse(form({ logoUrl })).success).toBe(true)
+    }
+  })
+
+  it('rejects protocol-relative URLs, non-image data URLs and oversized uploads', () => {
+    const tooBig = `data:image/png;base64,${'A'.repeat(Math.ceil((MAX_LOGO_BYTES * 4) / 3) + 100)}`
+    for (const logoUrl of ['//evil.test/x.png', 'javascript:alert(1)', 'data:text/html;base64,PGI+', tooBig]) {
+      expect(tenantConfigFormSchema.safeParse(form({ logoUrl })).success).toBe(false)
+    }
   })
 })

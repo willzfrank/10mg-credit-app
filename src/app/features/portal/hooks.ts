@@ -1,6 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useSession } from '../../shared/auth/authStore'
-import { getLoan, listLoanRepayments, listLoans, submitApplication, type ApplicationInput } from '../loans/api'
+import {
+  getLoan,
+  listLoanRepayments,
+  listLoans,
+  makeRepayment,
+  submitApplication,
+  type ApplicationInput,
+  type RepaymentInput,
+} from '../loans/api'
 import { useTenant } from '../tenant/useTenant'
 
 function useScope() {
@@ -35,6 +43,21 @@ export function useSubmitApplication() {
     mutationFn: (input: ApplicationInput) => submitApplication(scope.token!, input),
     meta: { tenantSlug: scope.slug },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['portal', scope.slug, scope.userId] }),
+  })
+}
+
+export function useMakeRepayment(loanId: string) {
+  const scope = useScope()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (input: RepaymentInput) => makeRepayment(scope.token!, loanId, input),
+    meta: { tenantSlug: scope.slug },
+    // The loan list, details and repayments change here, and the lender dashboard totals change too.
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['portal', scope.slug, scope.userId] }),
+        queryClient.invalidateQueries({ queryKey: ['dashboard', scope.slug] }),
+      ]),
   })
 }
 

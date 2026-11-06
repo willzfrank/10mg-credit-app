@@ -10,6 +10,7 @@ import { NotFoundError } from '../../shared/api/errors'
 import { QueryBoundary } from '../dashboard/panels'
 import { useFormatters } from '../dashboard/hooks'
 import { outstandingMinor, totalPayableMinor } from '../loans/money'
+import { RepaymentForm } from './RepaymentForm'
 import { StatusBadge } from './StatusBadge'
 import { useLoan, useLoanRepayments } from './hooks'
 
@@ -185,6 +186,10 @@ export function LoanDetailsPage() {
                 })}
               </ol>
             </section>
+
+            {l.status === 'approved' && repayments.data && outstanding > 0 && (
+              <RepaymentForm loanId={l.id} outstandingMinor={outstanding} />
+            )}
 
             {/* Repayment History Section */}
             <section
