@@ -1,10 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMemo } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { AmountInput } from '../../shared/AmountInput'
 import { useFormatters } from '../dashboard/hooks'
 import { useTenant } from '../tenant/useTenant'
 import { useMakeRepayment } from './hooks'
@@ -31,7 +31,7 @@ export function RepaymentForm({ loanId, outstandingMinor }: { loanId: string; ou
     [outstandingMinor, formattedOutstanding],
   )
   const {
-    register,
+    control,
     handleSubmit,
     reset,
     setValue,
@@ -51,14 +51,20 @@ export function RepaymentForm({ loanId, outstandingMinor }: { loanId: string; ou
         <Label className="flex-col items-stretch gap-1.5 text-xs font-medium text-foreground">
           <span>Amount ({settings.currency})</span>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Input
-              type="number"
-              step="any"
-              inputMode="decimal"
-              placeholder="0.00"
-              className="h-9 text-xs font-medium tabular-nums sm:max-w-56"
-              aria-invalid={!!errors.amount}
-              {...register('amount', { valueAsNumber: true })}
+            <Controller
+              control={control}
+              name="amount"
+              render={({ field }) => (
+                <AmountInput
+                  placeholder="0.00"
+                  className="h-9 text-xs font-medium tabular-nums sm:max-w-56"
+                  aria-invalid={!!errors.amount}
+                  name={field.name}
+                  onBlur={field.onBlur}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                />
+              )}
             />
             <Button
               type="button"

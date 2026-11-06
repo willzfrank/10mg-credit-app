@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMemo, useState } from 'react'
-import { useForm, useWatch } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router'
 import { z } from 'zod'
 import { ArrowLeftIcon } from 'lucide-react'
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { AmountInput } from '../../shared/AmountInput'
 import { formatMoney } from '../../shared/formatMoney'
 import type { TenantSettings } from '../tenant/types'
 import { useTenant } from '../tenant/useTenant'
@@ -128,14 +129,20 @@ export function ApplyPage() {
                 Min: {limits.min} · Max: {limits.max}
               </span>
             </div>
-            <Input
-              type="number"
-              step="any"
-              inputMode="decimal"
-              placeholder={String(settings.minLoanAmount)}
-              className="h-9 text-xs font-medium tabular-nums"
-              aria-invalid={!!errors.amount}
-              {...register('amount', { valueAsNumber: true })}
+            <Controller
+              control={control}
+              name="amount"
+              render={({ field }) => (
+                <AmountInput
+                  placeholder={String(settings.minLoanAmount)}
+                  className="h-9 text-xs font-medium tabular-nums"
+                  aria-invalid={!!errors.amount}
+                  name={field.name}
+                  onBlur={field.onBlur}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                />
+              )}
             />
             <span className="opacity-70 text-[11px] text-muted-foreground">
               Between {limits.min} and {limits.max}
