@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { ArrowRightIcon, EyeIcon, EyeOffIcon, LockIcon, MailIcon, ShieldCheckIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DEMO_TENANTS, demoAccounts, type DemoAccount } from '../../mocks/tenants'
 import { ThemeToggle } from '../../shared/theme/ThemeToggle'
 import { login } from '../../shared/auth/authApi'
 import { useSession } from '../../shared/auth/authStore'
@@ -44,13 +45,11 @@ export function LoginPage() {
 
   if (session) return <Navigate to={homePathFor(session.user.role)} replace />
 
-  const isAcme = slug === 'acme'
-  const demoAdminEmail = isAcme ? 'ada@acme.test' : 'zed@zenith.test'
-  const demoCustomerEmail = isAcme ? 'chidi@acme.test' : 'zoe@zenith.test'
+  const accounts = demoAccounts[slug] ?? []
 
-  const selectDemoAccount = (email: string) => {
+  const selectDemoAccount = ({ email, password }: DemoAccount) => {
     setValue('email', email, { shouldValidate: true })
-    setValue('password', 'password123', { shouldValidate: true })
+    setValue('password', password, { shouldValidate: true })
   }
 
   const primaryColor = colors.primary || '#0f766e'
@@ -95,32 +94,23 @@ export function LoginPage() {
           <span className="text-[11px] font-medium text-muted-foreground px-2.5 hidden sm:inline">
             Institution:
           </span>
-          <button
-            type="button"
-            onClick={() => {
-              if (slug !== 'acme') window.location.search = '?tenant=acme'
-            }}
-            className={`px-3 py-1 text-xs rounded-full font-medium transition-all cursor-pointer ${
-              slug === 'acme'
-                ? 'bg-primary text-primary-foreground shadow-2xs'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Acme Microfinance (NGN)
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              if (slug !== 'zenith') window.location.search = '?tenant=zenith'
-            }}
-            className={`px-3 py-1 text-xs rounded-full font-medium transition-all cursor-pointer ${
-              slug === 'zenith'
-                ? 'bg-primary text-primary-foreground shadow-2xs'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Zenith Credit (USD)
-          </button>
+          {DEMO_TENANTS.map((t) => (
+            <button
+              key={t.slug}
+              type="button"
+              aria-current={t.slug === slug ? 'true' : undefined}
+              onClick={() => {
+                if (t.slug !== slug) window.location.search = `?tenant=${t.slug}`
+              }}
+              className={`px-3 py-1 text-xs rounded-full font-medium transition-all cursor-pointer ${
+                t.slug === slug
+                  ? 'bg-primary text-primary-foreground shadow-2xs'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {t.name}
+            </button>
+          ))}
         </div>
 
         <div className="flex items-center gap-2">
@@ -244,51 +234,48 @@ export function LoginPage() {
               {mutation.isPending ? 'Signing in…' : 'Sign in'}
             </Button>
 
-            {/* Refined Quick Demo Access (Minimalist & Functional) */}
-            <div className="mt-4 pt-4 border-t border-border/70 space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-                  Quick Demo Access
-                </span>
-                <span className="text-[10px] text-muted-foreground/80">Click to fill</span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => selectDemoAccount(demoAdminEmail)}
-                  className="group relative flex flex-col items-start p-2.5 rounded-lg border border-border/80 bg-background/60 hover:bg-muted/80 hover:border-primary/40 text-left transition-all cursor-pointer"
-                >
-                  <div className="flex items-center justify-between w-full mb-1">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary">
-                      Admin
-                    </span>
-                    <ArrowRightIcon className="size-3 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
-                  </div>
-                  <span className="text-xs font-medium text-foreground">Lender Admin</span>
-                  <span className="text-[10px] text-muted-foreground font-mono truncate w-full mt-0.5">
-                    {demoAdminEmail}
+            {/* Quick demo access, driven by the tenant's demo accounts */}
+            {accounts.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-border/70 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                    Quick Demo Access
                   </span>
-                </button>
+                  <span className="text-[10px] text-muted-foreground/80">Click to fill</span>
+                </div>
 
-                <button
-                  type="button"
-                  onClick={() => selectDemoAccount(demoCustomerEmail)}
-                  className="group relative flex flex-col items-start p-2.5 rounded-lg border border-border/80 bg-background/60 hover:bg-muted/80 hover:border-primary/40 text-left transition-all cursor-pointer"
-                >
-                  <div className="flex items-center justify-between w-full mb-1">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
-                      Borrower
-                    </span>
-                    <ArrowRightIcon className="size-3 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
-                  </div>
-                  <span className="text-xs font-medium text-foreground">Borrower</span>
-                  <span className="text-[10px] text-muted-foreground font-mono truncate w-full mt-0.5">
-                    {demoCustomerEmail}
-                  </span>
-                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  {accounts.map((account) => {
+                    const isAdmin = account.role === 'lender_admin'
+                    return (
+                      <button
+                        key={account.email}
+                        type="button"
+                        onClick={() => selectDemoAccount(account)}
+                        className="group relative flex flex-col items-start p-2.5 rounded-lg border border-border/80 bg-background/60 hover:bg-muted/80 hover:border-primary/40 text-left transition-all cursor-pointer"
+                      >
+                        <div className="flex items-center justify-between w-full mb-1">
+                          <span
+                            className={`text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                              isAdmin ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+                            }`}
+                          >
+                            {isAdmin ? 'Admin' : 'Borrower'}
+                          </span>
+                          <ArrowRightIcon className="size-3 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                        </div>
+                        <span className="text-xs font-medium text-foreground">
+                          {isAdmin ? 'Lender Admin' : 'Borrower'}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground font-mono truncate w-full mt-0.5">
+                          {account.email}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
-            </div>
+            )}
           </form>
         </div>
       </div>

@@ -33,6 +33,30 @@ const seedTenants: Record<string, TenantConfig> = {
   },
 }
 
+/** Tenants offered in the demo switchers (login page and app header). */
+export const DEMO_TENANTS: { slug: string; name: string }[] = Object.values(seedTenants).map(({ slug, name }) => ({
+  slug,
+  name,
+}))
+
+export interface DemoAccount {
+  role: 'lender_admin' | 'customer'
+  email: string
+  password: string
+}
+
+/** One-click sign-in shortcuts per tenant. These must match the users seeded in mocks/db.ts. */
+export const demoAccounts: Record<string, DemoAccount[]> = {
+  acme: [
+    { role: 'lender_admin', email: 'ada@acme.test', password: 'password123' },
+    { role: 'customer', email: 'chidi@acme.test', password: 'password123' },
+  ],
+  zenith: [
+    { role: 'lender_admin', email: 'zed@zenith.test', password: 'password123' },
+    { role: 'customer', email: 'zoe@zenith.test', password: 'password123' },
+  ],
+}
+
 export const mockTenants: Record<string, TenantConfig> = structuredClone(seedTenants)
 
 export function resetTenants() {

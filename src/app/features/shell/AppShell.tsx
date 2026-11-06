@@ -35,6 +35,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { DEMO_TENANTS } from '../../mocks/tenants'
 import { ThemeToggle } from '../../shared/theme/ThemeToggle'
 import { logout } from '../../shared/auth/authApi'
 import { useSession } from '../../shared/auth/authStore'
@@ -89,8 +90,7 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
   const location = useLocation()
 
   const currentNav = nav.find((n) => n.to === location.pathname)
-  const otherTenant = slug === 'acme' ? 'zenith' : 'acme'
-  const otherTenantName = slug === 'acme' ? 'Zenith Credit' : 'Acme Microfinance'
+  const otherTenants = DEMO_TENANTS.filter((t) => t.slug !== slug)
 
   return (
     <SidebarProvider>
@@ -199,14 +199,17 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
                   <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     Switch Tenant
                   </DropdownMenuLabel>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      window.location.search = `?tenant=${otherTenant}`
-                    }}
-                    className="text-xs cursor-pointer"
-                  >
-                    Switch to {otherTenantName} ({otherTenant === 'acme' ? 'NGN' : 'USD'})
-                  </DropdownMenuItem>
+                  {otherTenants.map((t) => (
+                    <DropdownMenuItem
+                      key={t.slug}
+                      onClick={() => {
+                        window.location.search = `?tenant=${t.slug}`
+                      }}
+                      className="text-xs cursor-pointer"
+                    >
+                      Switch to {t.name}
+                    </DropdownMenuItem>
+                  ))}
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>

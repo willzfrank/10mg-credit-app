@@ -16,12 +16,14 @@ App runs at `http://localhost:5173`.
 All accounts use the password `password123`.
 
 ### Acme Microfinance (NGN)
+
 URL: `http://localhost:5173/?tenant=acme`
 
 - Admin: `ada@acme.test`
 - Customer: `chidi@acme.test` (also `bola@acme.test`, `emeka@acme.test`)
 
 ### Zenith Credit (USD)
+
 URL: `http://localhost:5173/?tenant=zenith`
 
 - Admin: `zed@zenith.test`
@@ -44,11 +46,6 @@ Admins are routed to `/admin` and customers to `/portal`.
 - `npm run preview` — Preview production build
 - `npm test` — Run tests
 - `npm run lint` — Run ESLint
-
-## Environment Variables
-
-- `VITE_DEFAULT_TENANT` — Fallback tenant (default: `acme`)
-- `VITE_BASE_DOMAIN` — Base domain for subdomain routing (e.g. `example.com`)
 
 ## Notes
 

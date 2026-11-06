@@ -1,6 +1,7 @@
+import { DEMO_TENANTS } from '../../mocks/tenants'
 import { tenantSlugSchema } from './types'
 
-export const DEFAULT_TENANT: string = import.meta.env.VITE_DEFAULT_TENANT ?? 'acme'
+export const DEFAULT_TENANT: string = import.meta.env.VITE_DEFAULT_TENANT ?? DEMO_TENANTS[0].slug
 
 const BASE_DOMAIN: string | undefined = import.meta.env.VITE_BASE_DOMAIN
 const STORAGE_KEY = 'tenant-slug'

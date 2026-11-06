@@ -57,8 +57,8 @@ describe('LoginPage', () => {
   it('displays the dynamic institution selector for switching tenants', () => {
     renderLoginPage(mockTenants.acme)
 
-    expect(screen.getByText('Acme Microfinance (NGN)')).not.toBeNull()
-    expect(screen.getByText('Zenith Credit (USD)')).not.toBeNull()
+    expect(screen.getByText('Acme Microfinance')).not.toBeNull()
+    expect(screen.getByText('Zenith Credit')).not.toBeNull()
   })
 })
 
