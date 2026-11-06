@@ -26,8 +26,8 @@ export default function App() {
           <RequireRole roles={['lender_admin']}>
             <AppShell
               nav={[
-                { to: '/admin', label: 'Dashboard' },
-                { to: '/admin/settings', label: 'Settings' },
+                { to: '/admin', label: 'Dashboard', icon: 'dashboard' },
+                { to: '/admin/settings', label: 'Settings', icon: 'settings' },
               ]}
             />
           </RequireRole>
@@ -43,8 +43,8 @@ export default function App() {
           <RequireRole roles={['customer']}>
             <AppShell
               nav={[
-                { to: '/portal', label: 'My loans' },
-                { to: '/portal/apply', label: 'Apply' },
+                { to: '/portal', label: 'My loans', icon: 'loans' },
+                { to: '/portal/apply', label: 'Apply', icon: 'apply' },
               ]}
             />
           </RequireRole>

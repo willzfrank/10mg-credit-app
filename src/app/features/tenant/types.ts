@@ -14,7 +14,7 @@ export const tenantColorFields = {
 
 const finiteNumber = () => z.number({ error: 'Enter a number' })
 
-export const tenantSettingsFields = {
+const tenantSettingsFields = {
   currency: z.enum(['NGN', 'USD']),
   locale: z.string().regex(/^[a-z]{2}-[A-Z]{2}$/, 'Use a locale like en-NG'),
   minLoanAmount: finiteNumber().positive(),
@@ -31,7 +31,7 @@ const loanRangeError = {
   message: 'Maximum loan amount must be at least the minimum',
 }
 
-export const tenantSettingsSchema = z.object(tenantSettingsFields).refine(loanRangeCheck, loanRangeError)
+const tenantSettingsSchema = z.object(tenantSettingsFields).refine(loanRangeCheck, loanRangeError)
 export const tenantSettingsFormSchema = z.strictObject(tenantSettingsFields).refine(loanRangeCheck, loanRangeError)
 
 export const tenantConfigSchema = z.object({

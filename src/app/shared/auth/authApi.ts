@@ -3,7 +3,7 @@ import { delay } from '../../mocks/delay'
 import { queryClient } from '../queryClient'
 import { getSession, useAuthStore, type Session } from './authStore'
 
-export interface Credentials {
+interface Credentials {
   email: string
   password: string
 }

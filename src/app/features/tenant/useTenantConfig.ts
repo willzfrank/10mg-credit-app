@@ -4,7 +4,7 @@ import { useSession } from '../../shared/auth/authStore'
 import { fetchTenantConfig, updateTenantConfig } from './api'
 import type { TenantConfigForm } from './configFormSchema'
 
-export const tenantKeys = {
+const tenantKeys = {
   config: (slug: string) => ['tenant', slug, 'config'] as const,
 }
 

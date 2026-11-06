@@ -15,7 +15,7 @@ interface StatusScreenProps {
 function StatusScreen({ role, title, message, children }: StatusScreenProps) {
   return (
     <main role={role} className="flex min-h-screen flex-col items-center justify-center gap-3 p-6 text-center">
-      <h1 className="text-xl font-semibold">{title}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
       {message && <p className="text-sm opacity-70">{message}</p>}
       {children}
     </main>

@@ -4,7 +4,7 @@ import { mockTenants } from '../../mocks/tenants'
 import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '../../shared/api/errors'
 import { outstandingMinor } from '../loans/money'
 
-export interface DashboardSummary {
+interface DashboardSummary {
   /** Applications awaiting a decision (loans with status 'pending'). */
   applications: number
   customers: number
@@ -12,14 +12,14 @@ export interface DashboardSummary {
   outstandingMinor: number
 }
 
-export interface CustomerRow {
+interface CustomerRow {
   id: string
   name: string
   email: string
   loanCount: number
 }
 
-export interface RepaymentRow {
+interface RepaymentRow {
   id: string
   loanId: string
   customerName: string

@@ -2,7 +2,7 @@ import { ForbiddenError, UnauthorizedError } from '../shared/api/errors'
 import type { Role, Session } from '../shared/auth/authStore'
 import { mockTenants, resetTenants } from './tenants'
 
-export interface MockUser {
+interface MockUser {
   id: string
   tenantId: string
   tenantSlug: string
@@ -12,7 +12,7 @@ export interface MockUser {
   role: Role
 }
 
-export type LoanStatus = 'pending' | 'approved' | 'rejected' | 'repaid'
+type LoanStatus = 'pending' | 'approved' | 'rejected' | 'repaid'
 
 export interface MockLoan {
   id: string

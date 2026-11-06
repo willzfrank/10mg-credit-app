@@ -6,7 +6,7 @@ const seedTenants: Record<string, TenantConfig> = {
     slug: 'acme',
     name: 'Acme Microfinance',
     logoUrl: '/logos/acme.svg',
-    colors: {},
+    colors: { primary: '#0f766e', secondary: '#fcd34d', accent: '#ccfbf1' },
     settings: {
       currency: 'NGN',
       locale: 'en-NG',
@@ -21,7 +21,7 @@ const seedTenants: Record<string, TenantConfig> = {
     slug: 'zenith',
     name: 'Zenith Credit',
     logoUrl: '/logos/zenith.svg',
-    colors: {},
+    colors: { primary: '#5b21b6', secondary: '#fb923c', accent: '#ede9fe' },
     settings: {
       currency: 'USD',
       locale: 'en-US',
