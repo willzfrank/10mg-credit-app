@@ -20,14 +20,11 @@ export interface MockLoan {
   tenantId: string
   tenantSlug: string
   userId: string
-  /** Principal in integer minor units (kobo / cents). */
   amountMinor: number
   tenorMonths: number
-  /** Annual interest rate, in percent. */
   ratePct: number
   status: LoanStatus
   createdAt: string
-  /** Set on loans created through submitApplication, to make retries idempotent. */
   idempotencyKey?: string
 }
 
@@ -60,7 +57,9 @@ export const mockUsers: MockUser[] = [
   seedUser('u_zenith_customer', 'zenith', 'Zoe Lin', 'zoe@zenith.test', 'customer'),
   seedUser('u_zenith_ravi', 'zenith', 'Ravi Shah', 'ravi@zenith.test', 'customer'),
   seedUser('u_zenith_mina', 'zenith', 'Mina Cole', 'mina@zenith.test', 'customer'),
-]
+  // seedUser('u_health10mg_lender', 'health10mg', 'Lendcorp', 'lender@health10mg.test', 'lender_admin'),
+  // seedUser('u_health10mg_customer', 'health10mg', 'Patient', 'customer@health10mg.test', 'customer'),
+] 
 
 const loan = (
   id: string,
@@ -139,7 +138,6 @@ export interface TokenOwner {
   role: Role
 }
 
-// Mock-only: tokens are mirrored to sessionStorage so a persisted client session still validates after a reload.
 const TOKENS_KEY = 'mock-db:tokens'
 
 function loadTokens(): Map<string, TokenOwner> {
@@ -185,7 +183,6 @@ export function authenticateToken(token: string): TokenOwner {
   return owner
 }
 
-/** Guard for lender-only operations: the session must be a lender_admin of the target tenant. */
 export function requireLenderAdmin(token: string, tenantSlug: string): TokenOwner {
   const owner = authenticateToken(token)
   if (owner.role !== 'lender_admin' || owner.tenantSlug !== tenantSlug) {

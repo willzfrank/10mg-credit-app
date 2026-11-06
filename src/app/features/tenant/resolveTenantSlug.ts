@@ -1,9 +1,9 @@
 import { DEMO_TENANTS } from '../../mocks/tenants'
 import { tenantSlugSchema } from './types'
 
-export const DEFAULT_TENANT: string = import.meta.env.VITE_DEFAULT_TENANT ?? DEMO_TENANTS[0].slug
+export const DEFAULT_TENANT: string = DEMO_TENANTS[0].slug || "acme"
 
-const BASE_DOMAIN: string | undefined = import.meta.env.VITE_BASE_DOMAIN
+const BASE_DOMAIN: string | undefined = "example.com"
 const STORAGE_KEY = 'tenant-slug'
 
 type SlugStorage = Pick<Storage, 'getItem' | 'setItem'>
