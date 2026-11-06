@@ -274,7 +274,7 @@ export function TenantConfigPage() {
                 {contrastWarning && (
                   <p
                     role="status"
-                    className="rounded border border-amber-300/80 bg-amber-50 dark:bg-amber-950/30 p-2.5 text-xs text-amber-700 dark:text-amber-300"
+                    className="rounded border border-amber-300/80 bg-amber-50 p-2.5 text-xs text-amber-700"
                   >
                     {contrastWarning}
                   </p>
@@ -345,7 +345,7 @@ export function TenantConfigPage() {
             {update.isSuccess && !isDirty && (
               <p
                 role="status"
-                className="text-xs text-emerald-600 dark:text-emerald-400 font-medium"
+                className="text-xs text-emerald-600 font-medium"
               >
                 Saved.
               </p>

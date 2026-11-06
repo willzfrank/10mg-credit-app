@@ -2,19 +2,19 @@ import { Badge } from '@/components/ui/badge'
 
 const STYLES: Record<string, { badge: string; dot: string }> = {
   pending: {
-    badge: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20',
+    badge: 'bg-amber-500/10 text-amber-700 border-amber-500/20',
     dot: 'bg-amber-500',
   },
   approved: {
-    badge: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20',
+    badge: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20',
     dot: 'bg-emerald-500',
   },
   rejected: {
-    badge: 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20',
+    badge: 'bg-rose-500/10 text-rose-700 border-rose-500/20',
     dot: 'bg-rose-500',
   },
   repaid: {
-    badge: 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20',
+    badge: 'bg-blue-500/10 text-blue-700 border-blue-500/20',
     dot: 'bg-blue-500',
   },
 }

@@ -103,7 +103,7 @@ export function MyLoansPage() {
                           onClick={() => setFilter(f.id)}
                           className={`rounded px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer ${
                             filter === f.id
-                              ? 'bg-zinc-900 text-zinc-50 dark:bg-zinc-100 dark:text-zinc-900'
+                              ? 'bg-zinc-900 text-zinc-50'
                               : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                           }`}
                         >

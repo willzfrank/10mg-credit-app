@@ -54,11 +54,11 @@ describe('LoginPage', () => {
     })
   })
 
-  it('displays the dynamic institution selector for switching tenants', () => {
-    renderLoginPage(mockTenants.acme)
+  it('does not reveal other institutions or offer a tenant switcher', () => {
+    const { container } = renderLoginPage(mockTenants.acme)
 
-    expect(screen.getByText('Acme Microfinance')).not.toBeNull()
-    expect(screen.getByText('Zenith Credit')).not.toBeNull()
+    expect(container.textContent).not.toMatch(/Zenith/)
+    expect(container.textContent).not.toContain('zenith.test')
+    expect(screen.queryByRole('button', { name: /Zenith/ })).toBeNull()
   })
 })
-

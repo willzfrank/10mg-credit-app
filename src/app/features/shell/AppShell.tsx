@@ -1,13 +1,11 @@
 import { useMutation } from '@tanstack/react-query'
 import {
-  ChevronDownIcon,
   ChevronsUpDownIcon,
   LogOutIcon,
 } from 'lucide-react'
 import { Suspense } from 'react'
 import { Link, Outlet, useLocation, useMatch, useNavigate } from 'react-router'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,8 +33,6 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { DEMO_TENANTS } from '../../mocks/tenants'
-import { ThemeToggle } from '../../shared/theme/ThemeToggle'
 import { logout } from '../../shared/auth/authApi'
 import { useSession } from '../../shared/auth/authStore'
 import { TenantLogo } from '../tenant/TenantLogo'
@@ -68,7 +64,7 @@ function NavButton({ item }: { item: NavItem }) {
         className={`h-8 px-2.5 rounded-md text-xs font-medium transition-colors ${
           active
             ? 'bg-primary text-primary-foreground font-semibold'
-            : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100'
+            : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
         }`}
       >
         {item.icon && <Icon name={item.icon} className="size-4 shrink-0" />}
@@ -90,7 +86,6 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
   const location = useLocation()
 
   const currentNav = nav.find((n) => n.to === location.pathname)
-  const otherTenants = DEMO_TENANTS.filter((t) => t.slug !== slug)
 
   return (
     <SidebarProvider>
@@ -135,7 +130,7 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
               }
             >
               <Avatar className="size-6 rounded">
-                <AvatarFallback className="bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-[10px] font-semibold rounded">
+                <AvatarFallback className="bg-zinc-200 text-zinc-900 text-[10px] font-semibold rounded">
                   {user ? initials(user.name) : '?'}
                 </AvatarFallback>
               </Avatar>
@@ -176,46 +171,6 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
               <span className="text-muted-foreground/60">/</span>
               <span className="font-semibold text-foreground">{currentNav?.label ?? 'Overview'}</span>
             </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Institution Switcher */}
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2.5 text-xs font-normal border-border bg-background hover:bg-muted"
-                  />
-                }
-              >
-                <span className="text-muted-foreground">Tenant:</span>
-                <span className="font-medium text-foreground ml-1">{slug}</span>
-                <ChevronDownIcon className="size-3 text-muted-foreground ml-1" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 p-1">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                    Switch Tenant
-                  </DropdownMenuLabel>
-                  {otherTenants.map((t) => (
-                    <DropdownMenuItem
-                      key={t.slug}
-                      onClick={() => {
-                        window.location.search = `?tenant=${t.slug}`
-                      }}
-                      className="text-xs cursor-pointer"
-                    >
-                      Switch to {t.name}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Theme Toggle */}
-            <ThemeToggle className="h-7 w-7 text-muted-foreground hover:text-foreground" />
           </div>
         </header>
 

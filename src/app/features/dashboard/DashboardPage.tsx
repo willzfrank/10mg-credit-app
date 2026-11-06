@@ -36,7 +36,7 @@ function Kpi({
     <Card
       role="group"
       aria-label={label}
-      className="min-w-0 border border-border bg-card shadow-2xs hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
+      className="min-w-0 border border-border bg-card shadow-2xs hover:border-zinc-300 transition-colors"
     >
       <CardContent className="p-4 sm:p-5">
         <div className="flex items-center justify-between text-muted-foreground">

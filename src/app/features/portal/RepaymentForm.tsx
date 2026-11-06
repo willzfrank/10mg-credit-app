@@ -83,7 +83,7 @@ export function RepaymentForm({ loanId, outstandingMinor }: { loanId: string; ou
           </p>
         )}
         {repay.isSuccess && (
-          <p role="status" className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+          <p role="status" className="text-xs font-medium text-emerald-600">
             Repayment recorded.
           </p>
         )}

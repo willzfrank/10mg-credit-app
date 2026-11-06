@@ -7,8 +7,7 @@ import { z } from 'zod'
 import { ArrowRightIcon, EyeIcon, EyeOffIcon, LockIcon, MailIcon, ShieldCheckIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { DEMO_TENANTS, demoAccounts, type DemoAccount } from '../../mocks/tenants'
-import { ThemeToggle } from '../../shared/theme/ThemeToggle'
+import { demoAccounts, type DemoAccount } from '../../mocks/tenants'
 import { login } from '../../shared/auth/authApi'
 import { useSession } from '../../shared/auth/authStore'
 import { homePathFor } from '../../shared/auth/homePath'
@@ -23,7 +22,7 @@ const loginSchema = z.object({
 type LoginValues = z.infer<typeof loginSchema>
 
 export function LoginPage() {
-  const { slug, name, colors } = useTenant()
+  const { slug, name } = useTenant()
   const session = useSession(slug)
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
@@ -52,80 +51,45 @@ export function LoginPage() {
     setValue('password', password, { shouldValidate: true })
   }
 
-  const primaryColor = colors.primary || '#0f766e'
-  const secondaryColor = colors.secondary || primaryColor
-  const accentColor = colors.accent || primaryColor
-
   return (
     <main
       className="relative min-h-screen w-full flex flex-col justify-between items-center p-4 sm:p-6 lg:p-8 font-sans antialiased overflow-x-hidden selection:bg-primary/20"
       style={{
         backgroundImage: `
           radial-gradient(circle at 50% -5%, color-mix(in srgb, var(--primary) 18%, transparent) 0%, transparent 55%),
-          radial-gradient(circle at 10% 90%, color-mix(in srgb, ${secondaryColor} 12%, transparent) 0%, transparent 45%),
-          radial-gradient(circle at 90% 90%, color-mix(in srgb, ${accentColor} 10%, transparent) 0%, transparent 45%)
+          radial-gradient(circle at 10% 90%, color-mix(in srgb, var(--secondary) 12%, transparent) 0%, transparent 45%),
+          radial-gradient(circle at 90% 90%, color-mix(in srgb, var(--accent) 10%, transparent) 0%, transparent 45%)
         `,
       }}
     >
       {/* Precision architectural grid overlay tinted with company primary color */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-40 dark:opacity-20 transition-opacity"
+        className="pointer-events-none absolute inset-0 opacity-40 transition-opacity"
         style={{
           backgroundImage: `
             linear-gradient(to right, color-mix(in srgb, var(--primary) 8%, transparent) 1px, transparent 1px),
             linear-gradient(to bottom, color-mix(in srgb, var(--primary) 8%, transparent) 1px, transparent 1px)
           `,
           backgroundSize: '40px 40px',
-          maskImage: 'radial-gradient(ellipse 75% 65% at 50% 45%, #000 60%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at 50% 45%, #000 60%, transparent 100%)',
+          maskImage: 'radial-gradient(ellipse 75% 65% at 50% 45%, black 60%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at 50% 45%, black 60%, transparent 100%)',
         }}
       />
 
       {/* Ambient company-branded radial aura behind the card */}
       <div
-        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 sm:size-[520px] rounded-full blur-[140px] opacity-25 dark:opacity-35 transition-all duration-700"
-        style={{ backgroundColor: primaryColor }}
+        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 sm:size-[520px] rounded-full blur-[140px] opacity-25 transition-all duration-700"
+        style={{ backgroundColor: 'var(--primary)' }}
       />
-
-      {/* Minimalist Top Utility Header */}
-      <header className="relative z-10 w-full max-w-4xl flex items-center justify-between py-2">
-        {/* Dynamic Institution Switcher */}
-        <div className="flex items-center gap-1 p-1 rounded-full border border-border/80 bg-card/80 dark:bg-card/60 backdrop-blur-md shadow-2xs">
-          <span className="text-[11px] font-medium text-muted-foreground px-2.5 hidden sm:inline">
-            Institution:
-          </span>
-          {DEMO_TENANTS.map((t) => (
-            <button
-              key={t.slug}
-              type="button"
-              aria-current={t.slug === slug ? 'true' : undefined}
-              onClick={() => {
-                if (t.slug !== slug) window.location.search = `?tenant=${t.slug}`
-              }}
-              className={`px-3 py-1 text-xs rounded-full font-medium transition-all cursor-pointer ${
-                t.slug === slug
-                  ? 'bg-primary text-primary-foreground shadow-2xs'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {t.name}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-        </div>
-      </header>
 
       {/* Central Modern Minimalist Sign-In Card */}
       <div className="relative z-10 w-full max-w-[420px] my-auto py-8">
-        <div className="relative rounded-2xl border border-border/80 bg-card/90 dark:bg-card/75 backdrop-blur-xl shadow-xl shadow-primary/5 p-6 sm:p-8">
+        <div className="relative rounded-2xl border border-border/80 bg-card/90 backdrop-blur-xl shadow-xl shadow-primary/5 p-6 sm:p-8">
           {/* Company dynamic hairline accent on card top */}
           <div
             className="absolute inset-x-6 top-0 h-0.5 rounded-t-full opacity-80"
             style={{
-              background: `linear-gradient(90deg, transparent, ${primaryColor}, transparent)`,
+              background: `linear-gradient(90deg, transparent, var(--primary), transparent)`,
             }}
           />
 
@@ -134,8 +98,8 @@ export function LoginPage() {
             <div
               className="flex size-14 items-center justify-center rounded-2xl border mb-3 shadow-2xs transition-transform duration-200 hover:scale-105"
               style={{
-                borderColor: `color-mix(in srgb, ${primaryColor} 25%, var(--border))`,
-                backgroundColor: `color-mix(in srgb, ${primaryColor} 8%, transparent)`,
+                borderColor: `color-mix(in srgb, var(--primary) 25%, var(--border))`,
+                backgroundColor: `color-mix(in srgb, var(--primary) 8%, transparent)`,
               }}
             >
               <TenantLogo className="h-7 w-auto object-contain" />
