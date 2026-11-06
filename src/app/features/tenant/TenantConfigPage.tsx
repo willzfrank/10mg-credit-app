@@ -13,6 +13,7 @@ import { readLogoFile } from './readLogoFile'
 import { hexColor, type TenantColors, type TenantConfig } from './types'
 import { useTenant } from './useTenant'
 import { useUpdateTenantConfig } from './useTenantConfig'
+import { PageHeader } from '../../shared/PageHeader'
 
 const toFormValues = ({ name, logoUrl, colors, settings }: TenantConfig): TenantConfigForm => ({
   name,
@@ -156,16 +157,7 @@ export function TenantConfigPage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-border">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            Institution settings
-          </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Configure white-label branding and lending parameters for {tenant.name}.
-          </p>
-        </div>
-      </div>
+      <PageHeader title="Institution settings" description={<>Configure white-label branding and lending parameters for {tenant.name}.</>} />
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6" noValidate>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">

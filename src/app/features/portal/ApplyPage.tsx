@@ -13,6 +13,7 @@ import { formatMoney } from '../../shared/formatMoney'
 import type { TenantSettings } from '../tenant/types'
 import { useTenant } from '../tenant/useTenant'
 import { newIdempotencyKey, useSubmitApplication } from './hooks'
+import { DetailRow } from '../../shared/TextBits'
 
 interface Limits {
   min: string
@@ -216,34 +217,22 @@ export function ApplyPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 flex flex-col gap-3">
-              <div className="flex justify-between items-center text-xs py-1 border-b border-border/50">
-                <span className="text-muted-foreground">Principal Requested</span>
-                <span className="font-medium text-foreground tabular-nums">
+              <DetailRow label="Principal Requested">
                   {validAmount > 0
                     ? formatMoney(Math.round(validAmount * 100), settings.currency, settings.locale)
                     : '—'}
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-xs py-1 border-b border-border/50">
-                <span className="text-muted-foreground">Annual Interest Rate</span>
-                <span className="font-medium text-foreground tabular-nums">{settings.interestRate}%</span>
-              </div>
-              <div className="flex justify-between items-center text-xs py-1 border-b border-border/50">
-                <span className="text-muted-foreground">Estimated Interest</span>
-                <span className="font-medium text-foreground tabular-nums">
+                </DetailRow>
+              <DetailRow label="Annual Interest Rate">{settings.interestRate}%</DetailRow>
+              <DetailRow label="Estimated Interest">
                   {validAmount > 0 && validTenor > 0
                     ? formatMoney(Math.round(estimatedInterest * 100), settings.currency, settings.locale)
                     : '—'}
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-xs py-1 border-b border-border/50">
-                <span className="font-semibold text-foreground">Total Obligation</span>
-                <span className="font-semibold text-foreground tabular-nums">
+                </DetailRow>
+              <DetailRow strong label="Total Obligation">
                   {validAmount > 0 && validTenor > 0
                     ? formatMoney(Math.round(estimatedTotal * 100), settings.currency, settings.locale)
                     : '—'}
-                </span>
-              </div>
+                </DetailRow>
               <div className="flex justify-between items-center text-xs mt-1 rounded-md bg-accent text-accent-foreground px-2.5 py-2">
                 <span className="font-semibold ">Estimated Monthly</span>
                 <span className="font-bold text-sm  tabular-nums">

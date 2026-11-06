@@ -11,6 +11,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useDashboardSummary, useFormatters } from './hooks'
 import { ApplicationsPanel, CustomersPanel, RepaymentsPanel } from './panels'
+import { PageHeader } from '../../shared/PageHeader'
 
 const TABS = [
   { id: 'applications', label: 'Applications', Panel: ApplicationsPanel },
@@ -65,17 +66,10 @@ export function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Header bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-border">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            Dashboard
-          </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Applications, customers and repayments at a glance.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
+      <PageHeader
+        title="Dashboard"
+        description="Applications, customers and repayments at a glance."
+        actions={
           <Button
             variant="outline"
             size="sm"
@@ -86,8 +80,8 @@ export function DashboardPage() {
             <RefreshCwIcon className={`size-3 ${summary.isFetching ? 'animate-spin' : ''}`} />
             <span>{summary.isFetching ? 'Refreshing…' : 'Refresh'}</span>
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       {summary.isError && (
         <div

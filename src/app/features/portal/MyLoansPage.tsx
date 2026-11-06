@@ -10,6 +10,8 @@ import { QueryBoundary } from '../dashboard/panels'
 import { useFormatters } from '../dashboard/hooks'
 import { StatusBadge } from './StatusBadge'
 import { useMyLoans } from './hooks'
+import { PageHeader } from '../../shared/PageHeader'
+import { SectionLabel } from '../../shared/TextBits'
 
 type FilterStatus = 'all' | 'approved' | 'pending' | 'repaid'
 
@@ -21,16 +23,10 @@ export function MyLoansPage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-border">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            My loans
-          </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Active facilities, terms, and repayment history.
-          </p>
-        </div>
-        <div>
+      <PageHeader
+        title="My loans"
+        description="Active facilities, terms, and repayment history."
+        actions={
           <Link
             to="/portal/apply"
             className={`${buttonVariants()} h-8 px-3 text-xs gap-1.5 font-medium`}
@@ -38,8 +34,8 @@ export function MyLoansPage() {
             <PlusIcon className="size-3.5" />
             <span>Apply for a loan</span>
           </Link>
-        </div>
-      </div>
+        }
+      />
 
       <QueryBoundary query={loans} isEmpty={(d) => d.length === 0} emptyText="You have no loans yet.">
         {(rows) => {
@@ -58,25 +54,25 @@ export function MyLoansPage() {
               {/* Clean Financial Metrics Bar (Stripe Capital style) */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 border border-border rounded-lg bg-card p-4">
                 <div className="flex flex-col gap-0.5 border-b sm:border-b-0 sm:border-r border-border pb-3 sm:pb-0 sm:pr-4">
-                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                  <SectionLabel>
                     Active Facilities
-                  </span>
+                  </SectionLabel>
                   <span className="text-xl font-semibold tracking-tight text-foreground tabular-nums">
                     {activeLoansCount}
                   </span>
                 </div>
                 <div className="flex flex-col gap-0.5 border-b sm:border-b-0 sm:border-r border-border pb-3 sm:pb-0 sm:px-4">
-                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                  <SectionLabel>
                     Total Borrowed
-                  </span>
+                  </SectionLabel>
                   <span className="text-xl font-semibold tracking-tight text-foreground tabular-nums">
                     {money(totalBorrowedMinor)}
                   </span>
                 </div>
                 <div className="flex flex-col gap-0.5 pt-1 sm:pt-0 sm:pl-4">
-                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                  <SectionLabel>
                     In Review
-                  </span>
+                  </SectionLabel>
                   <span className="text-xl font-semibold tracking-tight text-foreground tabular-nums">
                     {pendingCount}
                   </span>

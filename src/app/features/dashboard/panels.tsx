@@ -11,9 +11,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
 import { StatusBadge } from '../portal/StatusBadge'
 import { useCustomers, useDecideLoan, useFormatters, useLoans, useRepayments } from './hooks'
+import { ColumnHead, TableCard } from '../../shared/DataTable'
+import { EmptyState } from '../../shared/EmptyState'
 
 export function QueryBoundary<T>({
   query,
@@ -50,10 +52,7 @@ export function QueryBoundary<T>({
   }
   if (isEmpty(query.data)) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center rounded-md border border-dashed border-border bg-muted/20">
-        <FileTextIcon className="size-6 text-muted-foreground/60 mb-2" />
-        <p className="text-xs font-medium text-foreground">{emptyText}</p>
-      </div>
+      <EmptyState icon={<FileTextIcon className="size-6 text-muted-foreground/60 mb-2" />}>{emptyText}</EmptyState>
     )
   }
   return children(query.data)
@@ -150,9 +149,7 @@ export function ApplicationsPanel() {
 
           if (rows.length === 0) {
             return (
-              <div className="flex flex-col items-center justify-center p-8 text-center rounded-md border border-dashed border-border bg-muted/20">
-                <p className="text-xs text-muted-foreground">No applications match this filter.</p>
-              </div>
+              <EmptyState>No applications match this filter.</EmptyState>
             )
           }
 
@@ -184,16 +181,16 @@ export function ApplicationsPanel() {
           return (
             <>
               {/* Desktop Table View */}
-              <div className="hidden rounded-md border border-border overflow-hidden bg-card md:block">
+              <TableCard>
                 <Table>
                   <TableHeader className="bg-muted/40 border-b border-border">
                     <TableRow className="hover:bg-transparent">
-                      <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Borrower</TableHead>
-                      <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Amount</TableHead>
-                      <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Tenor</TableHead>
-                      <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Applied</TableHead>
-                      <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Status</TableHead>
-                      <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider text-right pr-4">Actions</TableHead>
+                      <ColumnHead>Borrower</ColumnHead>
+                      <ColumnHead>Amount</ColumnHead>
+                      <ColumnHead>Tenor</ColumnHead>
+                      <ColumnHead>Applied</ColumnHead>
+                      <ColumnHead>Status</ColumnHead>
+                      <ColumnHead align="right">Actions</ColumnHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -221,7 +218,7 @@ export function ApplicationsPanel() {
                     ))}
                   </TableBody>
                 </Table>
-              </div>
+              </TableCard>
 
               {/* Mobile Card View */}
               <ul className="flex flex-col gap-2.5 md:hidden">
@@ -281,22 +278,20 @@ export function CustomersPanel() {
 
           if (rows.length === 0) {
             return (
-              <div className="flex flex-col items-center justify-center p-8 text-center rounded-md border border-dashed border-border bg-muted/20">
-                <p className="text-xs text-muted-foreground">No customers match this filter.</p>
-              </div>
+              <EmptyState>No customers match this filter.</EmptyState>
             )
           }
 
           return (
             <>
               {/* Desktop Table */}
-              <div className="hidden rounded-md border border-border overflow-hidden bg-card md:block">
+              <TableCard>
                 <Table>
                   <TableHeader className="bg-muted/40 border-b border-border">
                     <TableRow className="hover:bg-transparent">
-                      <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Borrower</TableHead>
-                      <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Email</TableHead>
-                      <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Loans Borrowed</TableHead>
+                      <ColumnHead>Borrower</ColumnHead>
+                      <ColumnHead>Email</ColumnHead>
+                      <ColumnHead>Loans Borrowed</ColumnHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -313,7 +308,7 @@ export function CustomersPanel() {
                     ))}
                   </TableBody>
                 </Table>
-              </div>
+              </TableCard>
 
               {/* Mobile Cards */}
               <ul className="flex flex-col gap-2.5 md:hidden">
@@ -373,25 +368,23 @@ export function RepaymentsPanel() {
 
           if (rows.length === 0) {
             return (
-              <div className="flex flex-col items-center justify-center p-8 text-center rounded-md border border-dashed border-border bg-muted/20">
-                <p className="text-xs text-muted-foreground">No repayments match this filter.</p>
-              </div>
+              <EmptyState>No repayments match this filter.</EmptyState>
             )
           }
 
           return (
             <>
               {/* Desktop Table */}
-              <div className="hidden rounded-md border border-border overflow-hidden bg-card md:block">
+              <TableCard>
                 <Table>
                   <TableHeader className="bg-muted/40 border-b border-border">
                     <TableRow className="hover:bg-transparent">
-                      <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Date</TableHead>
-                      <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Borrower</TableHead>
-                      <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Loan Reference</TableHead>
-                      <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider text-right pr-4">
+                      <ColumnHead>Date</ColumnHead>
+                      <ColumnHead>Borrower</ColumnHead>
+                      <ColumnHead>Loan Reference</ColumnHead>
+                      <ColumnHead align="right">
                         Amount
-                      </TableHead>
+                      </ColumnHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -411,7 +404,7 @@ export function RepaymentsPanel() {
                     ))}
                   </TableBody>
                 </Table>
-              </div>
+              </TableCard>
 
               {/* Mobile Cards */}
               <ul className="flex flex-col gap-2.5 md:hidden">

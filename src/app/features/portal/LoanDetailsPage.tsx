@@ -3,7 +3,7 @@ import {
   ArrowLeftIcon,
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table'
 import { Progress } from '@/components/ui/progress'
 import type { MockLoan } from '../../mocks/db'
 import { NotFoundError } from '../../shared/api/errors'
@@ -13,6 +13,9 @@ import { outstandingMinor, totalPayableMinor } from '../loans/money'
 import { RepaymentForm } from './RepaymentForm'
 import { StatusBadge } from './StatusBadge'
 import { useLoan, useLoanRepayments } from './hooks'
+import { ColumnHead, TableCard } from '../../shared/DataTable'
+import { PageHeader } from '../../shared/PageHeader'
+import { SectionLabel } from '../../shared/TextBits'
 
 type StepState = 'done' | 'current' | 'upcoming'
 
@@ -42,7 +45,7 @@ function Detail({
   return (
     <Card size="sm" className="min-w-0 border border-border bg-card shadow-2xs">
       <CardContent className="p-3">
-        <dt className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{label}</dt>
+        <dt><SectionLabel>{label}</SectionLabel></dt>
         <dd className="mt-1 text-sm font-semibold tracking-tight text-foreground break-words tabular-nums">
           {children}
         </dd>
@@ -87,8 +90,9 @@ export function LoanDetailsPage() {
         return (
           <div className="flex flex-col gap-6">
             {/* Top Navigation Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-border">
-              <div className="flex items-center gap-3">
+            <PageHeader
+              compact
+              leading={
                 <Link
                   to="/portal"
                   className="flex size-7 items-center justify-center rounded border border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
@@ -96,20 +100,11 @@ export function LoanDetailsPage() {
                 >
                   <ArrowLeftIcon className="size-3.5" />
                 </Link>
-                <div>
-                  <h1 className="text-xl font-semibold tracking-tight text-foreground">
-                    Loan {l.id}
-                  </h1>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Originated on {date(l.createdAt)}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <StatusBadge status={l.status} />
-              </div>
-            </div>
+              }
+              title={<>Loan {l.id}</>}
+              description={<>Originated on {date(l.createdAt)}</>}
+              actions={<StatusBadge status={l.status} />}
+            />
 
             {/* Repayment Progress (Stripe Capital style) */}
             {showOutstanding && (
@@ -117,9 +112,9 @@ export function LoanDetailsPage() {
                 <CardContent className="p-4 sm:p-5 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                      <SectionLabel>
                         Repayment Progress
-                      </span>
+                      </SectionLabel>
                       <p className="text-lg font-semibold tracking-tight text-foreground mt-0.5 tabular-nums">
                         {repaymentProgress}% Repaid
                       </p>
@@ -204,14 +199,14 @@ export function LoanDetailsPage() {
                 {(rows) => (
                   <>
                     {/* Desktop Table */}
-                    <div className="hidden rounded-md border border-border overflow-hidden bg-card md:block">
+                    <TableCard>
                       <Table>
                         <TableHeader className="bg-muted/40 border-b border-border">
                           <TableRow className="hover:bg-transparent">
-                            <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Date</TableHead>
-                            <TableHead className="h-8 px-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider text-right pr-4">
+                            <ColumnHead>Date</ColumnHead>
+                            <ColumnHead align="right">
                               Amount
-                            </TableHead>
+                            </ColumnHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -227,7 +222,7 @@ export function LoanDetailsPage() {
                           ))}
                         </TableBody>
                       </Table>
-                    </div>
+                    </TableCard>
 
                     {/* Mobile List */}
                     <ul className="flex flex-col gap-2 md:hidden">

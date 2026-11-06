@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { ArrowRightIcon, EyeIcon, EyeOffIcon, LockIcon, MailIcon, ShieldCheckIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { demoAccounts, type DemoAccount } from '../../mocks/tenants'
 import { login } from '../../shared/auth/authApi'
 import { useSession } from '../../shared/auth/authStore'
@@ -121,9 +122,9 @@ export function LoginPage() {
           >
             {/* Email Field */}
             <div className="space-y-1.5">
-              <label htmlFor="email" className="text-xs font-medium text-foreground block">
+              <Label htmlFor="email" className="text-xs">
                 Email address
-              </label>
+              </Label>
               <div className="relative">
                 <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
                 <Input
@@ -146,9 +147,9 @@ export function LoginPage() {
             {/* Password Field */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="text-xs font-medium text-foreground block">
+                <Label htmlFor="password" className="text-xs">
                   Password
-                </label>
+                </Label>
                 <span className="text-[11px] text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
                   Forgot password?
                 </span>
