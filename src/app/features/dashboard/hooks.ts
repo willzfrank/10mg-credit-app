@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from '@/components/ui/use-toast'
 import { ConflictError } from '../../shared/api/errors'
 import { useSession } from '../../shared/auth/authStore'
 import { formatMoney } from '../../shared/formatMoney'
@@ -43,8 +44,14 @@ export function useDecideLoan() {
     mutationFn: ({ loanId, decision }: { loanId: string; decision: 'approved' | 'rejected' }) =>
       decideLoan(scope.token!, loanId, decision),
     meta: { tenantSlug: scope.slug },
-    onSuccess: refresh,
-    onError: (error) => (error instanceof ConflictError ? refresh() : undefined),
+    onSuccess: (_, variables) => {
+      refresh()
+      toast.success(`Loan ${variables.loanId} ${variables.decision}`)
+    },
+    onError: (error) => {
+      if (error instanceof ConflictError) refresh()
+      toast.error(error.message || 'Action failed')
+    },
   })
 }
 

@@ -164,9 +164,9 @@ export function LoanDetailsPage() {
                       aria-current={step.state === 'current' ? 'step' : undefined}
                       className={`inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-medium border ${
                         isDone
-                          ? 'bg-zinc-100 text-zinc-800 border-zinc-200'
+                          ? 'bg-secondary text-secondary-foreground border-secondary/40'
                           : isCurrent
-                          ? 'bg-zinc-900 text-zinc-50 border-zinc-900'
+                          ? 'bg-primary text-primary-foreground border-primary'
                           : 'bg-muted/40 text-muted-foreground border-border opacity-50'
                       }`}
                     >

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { toast } from '@/components/ui/use-toast'
 import { StatusBadge } from '../portal/StatusBadge'
 import { applyTheme } from './applyTheme'
 import { getPrimaryContrastWarning, tenantConfigFormSchema, type TenantConfigForm } from './configFormSchema'
@@ -103,7 +104,7 @@ export function TenantConfigPage() {
     handleSubmit,
     reset,
     control,
-    formState: { errors, isDirty },
+    formState: { errors },
   } = useForm<TenantConfigForm>({
     resolver: zodResolver(tenantConfigFormSchema),
     defaultValues: toFormValues(tenant),
@@ -135,15 +136,26 @@ export function TenantConfigPage() {
     try {
       setValue('logoUrl', await readLogoFile(file), { shouldDirty: true, shouldValidate: true })
       setUploadError(null)
+      toast.success('Logo uploaded successfully')
     } catch (error) {
-      setUploadError(error instanceof Error ? error.message : 'Could not upload that logo')
+      const msg = error instanceof Error ? error.message : 'Could not upload that logo'
+      setUploadError(msg)
+      toast.error(msg)
     }
   }
 
   const contrastWarning = hexColor.safeParse(primary).success ? getPrimaryContrastWarning(primary) : null
 
   const onSubmit = (form: TenantConfigForm) =>
-    update.mutate(form, { onSuccess: (saved) => reset(toFormValues(saved)) })
+    update.mutate(form, {
+      onSuccess: (saved) => {
+        reset(toFormValues(saved))
+        toast.success('Institution settings saved successfully')
+      },
+      onError: (err) => {
+        toast.error(err.message || 'Failed to save settings')
+      },
+    })
 
   const num = { valueAsNumber: true } as const
 
@@ -318,24 +330,6 @@ export function TenantConfigPage() {
                 </Field>
               </CardContent>
             </Card>
-
-            {update.error && (
-              <p
-                role="alert"
-                className="rounded border border-destructive/30 bg-destructive/10 p-2.5 text-xs text-destructive"
-              >
-                {update.error.message}
-              </p>
-            )}
-
-            {update.isSuccess && !isDirty && (
-              <p
-                role="status"
-                className="text-xs text-emerald-600 font-medium"
-              >
-                Saved.
-              </p>
-            )}
 
             <div className="flex items-center gap-2 pt-1">
               <Button

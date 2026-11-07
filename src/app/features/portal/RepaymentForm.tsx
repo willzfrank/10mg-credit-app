@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { toast } from '@/components/ui/use-toast'
 import { AmountInput } from '../../shared/AmountInput'
 import { useFormatters } from '../dashboard/hooks'
 import { useTenant } from '../tenant/useTenant'
@@ -39,7 +40,18 @@ export function RepaymentForm({ loanId, outstandingMinor }: { loanId: string; ou
   } = useForm<z.infer<typeof schema>>({ resolver: zodResolver(schema), defaultValues: { amount: undefined } })
 
   const onSubmit = ({ amount }: z.infer<typeof schema>) =>
-    repay.mutate({ amountMinor: Math.round(amount * 100) }, { onSuccess: () => reset({ amount: undefined }) })
+    repay.mutate(
+      { amountMinor: Math.round(amount * 100) },
+      {
+        onSuccess: () => {
+          reset({ amount: undefined })
+          toast.success('Repayment recorded.')
+        },
+        onError: (err) => {
+          toast.error(err.message)
+        },
+      },
+    )
 
   return (
     <section
@@ -68,7 +80,7 @@ export function RepaymentForm({ loanId, outstandingMinor }: { loanId: string; ou
             />
             <Button
               type="button"
-              variant="outline"
+              variant="secondary"
               className="h-9 px-3 text-xs cursor-pointer"
               onClick={() => setValue('amount', outstandingMinor / 100, { shouldValidate: true })}
             >
@@ -82,17 +94,6 @@ export function RepaymentForm({ loanId, outstandingMinor }: { loanId: string; ou
             </span>
           )}
         </Label>
-
-        {repay.error && (
-          <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/10 p-2.5 text-xs text-destructive">
-            {repay.error.message}
-          </p>
-        )}
-        {repay.isSuccess && (
-          <p role="status" className="text-xs font-medium text-emerald-600">
-            Repayment recorded.
-          </p>
-        )}
 
         <div>
           <Button type="submit" disabled={repay.isPending} className="h-8 px-4 text-xs font-medium cursor-pointer">

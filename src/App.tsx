@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router'
+import { Toaster } from './components/ui/toaster'
 import { AppShell } from './app/features/shell/AppShell'
 import { useTenant } from './app/features/tenant/useTenant'
 import { LoadingScreen } from './app/shared/LoadingScreen'
@@ -21,46 +22,49 @@ function HomeRedirect() {
 
 export default function App() {
   return (
-    <Suspense fallback={<LoadingScreen />}>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/admin"
-          element={
-            <RequireRole roles={['lender_admin']}>
-              <AppShell
-                nav={[
-                  { to: '/admin', label: 'Dashboard', icon: 'dashboard' },
-                  { to: '/admin/settings', label: 'Settings', icon: 'settings' },
-                ]}
-              />
-            </RequireRole>
-          }
-        >
-          <Route index element={<DashboardPage />} />
-          <Route path="settings" element={<TenantConfigPage />} />
-          <Route path="*" element={<Navigate to="/admin" replace />} />
-        </Route>
-        <Route
-          path="/portal"
-          element={
-            <RequireRole roles={['customer']}>
-              <AppShell
-                nav={[
-                  { to: '/portal', label: 'My loans', icon: 'loans' },
-                  { to: '/portal/apply', label: 'Apply', icon: 'apply' },
-                ]}
-              />
-            </RequireRole>
-          }
-        >
-          <Route index element={<MyLoansPage />} />
-          <Route path="apply" element={<ApplyPage />} />
-          <Route path="loans/:id" element={<LoanDetailsPage />} />
-          <Route path="*" element={<Navigate to="/portal" replace />} />
-        </Route>
-        <Route path="*" element={<HomeRedirect />} />
-      </Routes>
-    </Suspense>
+    <>
+      <Suspense fallback={<LoadingScreen />}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/admin"
+            element={
+              <RequireRole roles={['lender_admin']}>
+                <AppShell
+                  nav={[
+                    { to: '/admin', label: 'Dashboard', icon: 'dashboard' },
+                    { to: '/admin/settings', label: 'Settings', icon: 'settings' },
+                  ]}
+                />
+              </RequireRole>
+            }
+          >
+            <Route index element={<DashboardPage />} />
+            <Route path="settings" element={<TenantConfigPage />} />
+            <Route path="*" element={<Navigate to="/admin" replace />} />
+          </Route>
+          <Route
+            path="/portal"
+            element={
+              <RequireRole roles={['customer']}>
+                <AppShell
+                  nav={[
+                    { to: '/portal', label: 'My loans', icon: 'loans' },
+                    { to: '/portal/apply', label: 'Apply', icon: 'apply' },
+                  ]}
+                />
+              </RequireRole>
+            }
+          >
+            <Route index element={<MyLoansPage />} />
+            <Route path="apply" element={<ApplyPage />} />
+            <Route path="loans/:id" element={<LoanDetailsPage />} />
+            <Route path="*" element={<Navigate to="/portal" replace />} />
+          </Route>
+          <Route path="*" element={<HomeRedirect />} />
+        </Routes>
+      </Suspense>
+      <Toaster />
+    </>
   )
 }

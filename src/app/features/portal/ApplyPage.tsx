@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { toast } from '@/components/ui/use-toast'
 import { AmountInput } from '../../shared/AmountInput'
 import { formatMoney } from '../../shared/formatMoney'
 import type { TenantSettings } from '../tenant/types'
@@ -90,7 +91,15 @@ export function ApplyPage() {
   const onSubmit = (values: ApplyValues) =>
     submit.mutate(
       { amountMinor: Math.round(values.amount * 100), tenorMonths: values.tenorMonths, idempotencyKey },
-      { onSuccess: (loan) => navigate(`/portal/loans/${loan.id}`) },
+      {
+        onSuccess: (loan) => {
+          toast.success('Loan application submitted successfully')
+          navigate(`/portal/loans/${loan.id}`)
+        },
+        onError: (err) => {
+          toast.error(err.message || 'Failed to submit loan application')
+        },
+      },
     )
 
   return (
@@ -175,15 +184,6 @@ export function ApplyPage() {
               </span>
             )}
           </Label>
-
-          {submit.error && (
-            <div
-              role="alert"
-              className="rounded-md border border-destructive/30 bg-destructive/10 p-2.5 text-xs text-destructive"
-            >
-              {submit.error.message}
-            </div>
-          )}
 
           <div className="flex items-center gap-3 pt-3 border-t border-border">
             <Button

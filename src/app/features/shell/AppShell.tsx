@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
+import { toast } from '@/components/ui/use-toast'
 import {
   Sidebar,
   SidebarContent,
@@ -80,7 +81,10 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
   const navigate = useNavigate()
   const signOut = useMutation({
     mutationFn: () => logout(slug),
-    onSuccess: () => navigate('/login', { replace: true }),
+    onSuccess: () => {
+      toast.info('Signed out')
+      navigate('/login', { replace: true })
+    },
   })
   const user = session?.user
   const location = useLocation()
@@ -93,7 +97,7 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
         <SidebarHeader className="p-4 border-b border-border">
           <div className="flex items-center justify-between">
             <TenantLogo className="h-6 w-auto" />
-            <span className="font-mono text-[10px] text-muted-foreground uppercase px-1.5 py-0.5 rounded border border-border">
+            <span className="font-mono text-[10px] uppercase px-1.5 py-0.5 rounded border border-secondary/40 bg-secondary text-secondary-foreground font-semibold">
               {settings.currency}
             </span>
           </div>
@@ -127,7 +131,7 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
               }
             >
               <Avatar className="size-6 rounded">
-                <AvatarFallback className="bg-zinc-200 text-zinc-900 text-[10px] font-semibold rounded">
+                <AvatarFallback className="bg-accent text-accent-foreground text-[10px] font-semibold rounded">
                   {user ? initials(user.name) : '?'}
                 </AvatarFallback>
               </Avatar>

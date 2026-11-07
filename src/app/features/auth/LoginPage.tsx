@@ -8,6 +8,7 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { toast } from '@/components/ui/use-toast'
 import { demoAccounts, type DemoAccount } from '../../mocks/tenants'
 import { login } from '../../shared/auth/authApi'
 import { useSession } from '../../shared/auth/authStore'
@@ -40,7 +41,13 @@ export function LoginPage() {
 
   const mutation = useMutation({
     mutationFn: (values: LoginValues) => login(slug, values),
-    onSuccess: (s) => navigate(homePathFor(s.user.role), { replace: true }),
+    onSuccess: (s) => {
+      toast.success(`Welcome back, ${s.user.name}`)
+      navigate(homePathFor(s.user.role), { replace: true })
+    },
+    onError: (err) => {
+      toast.error(err.message || 'Unable to sign in. Please check your credentials.')
+    },
   })
 
   if (session) return <Navigate to={homePathFor(session.user.role)} replace />
@@ -144,15 +151,6 @@ export function LoginPage() {
               </span>
             </div>
 
-            {mutation.error && (
-              <div
-                role="alert"
-                className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive"
-              >
-                {mutation.error.message}
-              </div>
-            )}
-
             <Button
               type="submit"
               className="h-11 w-full rounded-lg text-sm font-medium cursor-pointer shadow-none transition-opacity hover:opacity-90 mt-1"
@@ -185,12 +183,16 @@ export function LoginPage() {
                         key={account.email}
                         type="button"
                         onClick={() => selectDemoAccount(account)}
-                        className="flex flex-col items-start p-2.5 rounded-lg border border-gray-200 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-900/60 hover:bg-gray-100 dark:hover:bg-zinc-800 text-left transition-colors cursor-pointer"
+                        className={`flex flex-col items-start p-2.5 rounded-lg border text-left transition-colors cursor-pointer ${
+                          isAdmin
+                            ? 'border-border bg-muted/40 hover:bg-muted'
+                            : 'border-secondary/40 bg-secondary/30 hover:bg-secondary/60 text-secondary-foreground'
+                        }`}
                       >
-                        <span className="text-xs font-semibold text-gray-800 dark:text-zinc-200">
+                        <span className="text-xs font-semibold text-foreground">
                           {isAdmin ? 'Lender Admin' : 'Borrower'}
                         </span>
-                        <span className="text-[11px] text-gray-500 dark:text-zinc-400 font-mono truncate w-full mt-0.5">
+                        <span className="text-[11px] text-muted-foreground font-mono truncate w-full mt-0.5">
                           {account.email}
                         </span>
                       </button>
