@@ -60,7 +60,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col lg:grid lg:grid-cols-2 bg-white dark:bg-zinc-950">
+    <div className="min-h-screen w-full flex flex-col lg:grid lg:grid-cols-2 bg-white">
       <div
         className="hidden lg:flex flex-col justify-center items-center p-12 text-center text-white relative"
         style={{ backgroundColor: 'var(--primary)' }}
@@ -78,14 +78,14 @@ export function LoginPage() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center items-center p-6 sm:p-12 lg:p-16 bg-white dark:bg-zinc-950">
+      <div className="flex-1 flex flex-col justify-center items-center p-6 sm:p-12 lg:p-16 bg-white">
         <div className="w-full max-w-md">
           <div className="mb-8">
             <TenantLogo className="h-9 w-auto object-contain mb-6" />
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
               Sign in to {name}
             </h1>
-            <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1.5">
+            <p className="text-sm text-gray-500 mt-1.5">
               Enter your details to sign in to your account
             </p>
           </div>
@@ -96,7 +96,7 @@ export function LoginPage() {
             noValidate
           >
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-xs font-normal text-gray-600 dark:text-zinc-300">
+              <Label htmlFor="email" className="text-xs font-normal text-gray-600">
                 Email Address
               </Label>
               <Input
@@ -104,7 +104,7 @@ export function LoginPage() {
                 type="email"
                 autoComplete="username"
                 placeholder="you@example.com"
-                className="h-11 rounded-lg bg-[#f0f4f9] dark:bg-zinc-900 border-0 px-4 text-sm text-gray-900 dark:text-white focus-visible:ring-1 focus-visible:ring-primary shadow-none"
+                className="h-11 rounded-lg bg-[#f0f4f9] border-0 px-4 text-sm text-gray-900 focus-visible:ring-1 focus-visible:ring-primary shadow-none"
                 aria-invalid={!!errors.email}
                 {...register('email')}
               />
@@ -116,7 +116,7 @@ export function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-xs font-normal text-gray-600 dark:text-zinc-300">
+              <Label htmlFor="password" className="text-xs font-normal text-gray-600">
                 Password
               </Label>
               <div className="relative">
@@ -125,14 +125,14 @@ export function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   placeholder="••••••••"
-                  className="h-11 rounded-lg bg-[#f0f4f9] dark:bg-zinc-900 border-0 px-4 pr-10 text-sm text-gray-900 dark:text-white focus-visible:ring-1 focus-visible:ring-primary shadow-none"
+                  className="h-11 rounded-lg bg-[#f0f4f9] border-0 px-4 pr-10 text-sm text-gray-900 focus-visible:ring-1 focus-visible:ring-primary shadow-none"
                   aria-invalid={!!errors.password}
                   {...register('password')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
@@ -163,7 +163,7 @@ export function LoginPage() {
               {mutation.isPending ? 'Signing in…' : 'Sign in'}
             </Button>
 
-            <p className="text-center text-xs text-gray-500 dark:text-zinc-400 mt-2">
+            <p className="text-center text-xs text-gray-500 mt-2">
               Don't Have An Account?{' '}
               <span
                 className="font-medium hover:underline cursor-pointer"
@@ -174,8 +174,8 @@ export function LoginPage() {
             </p>
 
             {accounts.length > 0 && (
-              <div className="mt-6 pt-5 border-t border-gray-100 dark:border-zinc-800 space-y-2">
-                <p className="text-[11px] font-medium text-gray-400 dark:text-zinc-500">
+              <div className="mt-6 pt-5 border-t border-gray-100 space-y-2">
+                <p className="text-[11px] font-medium text-gray-400">
                   Demo accounts:
                 </p>
                 <div className="grid grid-cols-2 gap-2">
@@ -188,14 +188,14 @@ export function LoginPage() {
                         onClick={() => selectDemoAccount(account)}
                         className={`flex flex-col items-start p-2.5 rounded-lg border text-left transition-colors cursor-pointer ${
                           isAdmin
-                            ? 'border-primary/30 bg-primary/10 hover:bg-primary/20 text-foreground'
-                            : 'border-secondary/40 bg-secondary/30 hover:bg-secondary/60 text-secondary-foreground'
+                            ? 'border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-900'
+                            : 'border-secondary/50 bg-secondary/30 hover:bg-secondary/50 text-secondary-foreground'
                         }`}
                       >
-                        <span className="text-xs font-semibold text-foreground">
+                        <span className="text-xs font-semibold text-gray-800">
                           {isAdmin ? 'Lender Admin' : 'Borrower'}
                         </span>
-                        <span className="text-[11px] text-muted-foreground font-mono truncate w-full mt-0.5">
+                        <span className="text-[11px] text-gray-500 font-mono truncate w-full mt-0.5">
                           {account.email}
                         </span>
                       </button>
@@ -206,7 +206,7 @@ export function LoginPage() {
             )}
           </form>
 
-          <p className="text-center text-[11px] text-gray-400 dark:text-zinc-600 mt-8 font-mono">
+          <p className="text-center text-[11px] text-gray-400 mt-8 font-mono">
             {slug} · {name}
           </p>
         </div>
