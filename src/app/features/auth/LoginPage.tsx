@@ -66,9 +66,6 @@ export function LoginPage() {
         style={{ backgroundColor: 'var(--primary)' }}
       >
         <div className="max-w-md space-y-4">
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium bg-accent text-accent-foreground border border-accent/40 mb-2">
-            <span>Institutional Lending Gateway</span>
-          </div>
           <h2 className="text-3xl xl:text-4xl font-bold tracking-tight text-white">
             Access Credit with Confidence
           </h2>
@@ -145,14 +142,7 @@ export function LoginPage() {
               )}
             </div>
 
-            <div className="flex justify-end">
-              <span
-                className="text-xs font-medium hover:underline cursor-pointer"
-                style={{ color: 'var(--primary)' }}
-              >
-                Forgot Password?
-              </span>
-            </div>
+            
 
             <Button
               type="submit"
@@ -163,15 +153,7 @@ export function LoginPage() {
               {mutation.isPending ? 'Signing in…' : 'Sign in'}
             </Button>
 
-            <p className="text-center text-xs text-gray-500 mt-2">
-              Don't Have An Account?{' '}
-              <span
-                className="font-medium hover:underline cursor-pointer"
-                style={{ color: 'var(--primary)' }}
-              >
-                Create Account
-              </span>
-            </p>
+           
 
             {accounts.length > 0 && (
               <div className="mt-6 pt-5 border-t border-gray-100 space-y-2">
