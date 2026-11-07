@@ -101,7 +101,7 @@ export function LoginPage() {
                 type="email"
                 autoComplete="username"
                 placeholder="you@example.com"
-                className="h-11 rounded-lg bg-[#f0f4f9] border-0 px-4 text-sm text-gray-900 focus-visible:ring-1 focus-visible:ring-primary shadow-none"
+                className="h-11 rounded-lg bg-[#f0f4f9] border border-gray-300 hover:border-gray-400 px-4 text-sm text-gray-900 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary shadow-none transition-colors"
                 aria-invalid={!!errors.email}
                 {...register('email')}
               />
@@ -122,7 +122,7 @@ export function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   placeholder="••••••••"
-                  className="h-11 rounded-lg bg-[#f0f4f9] border-0 px-4 pr-10 text-sm text-gray-900 focus-visible:ring-1 focus-visible:ring-primary shadow-none"
+                  className="h-11 rounded-lg bg-[#f0f4f9] border border-gray-300 hover:border-gray-400 px-4 pr-10 text-sm text-gray-900 focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary shadow-none transition-colors"
                   aria-invalid={!!errors.password}
                   {...register('password')}
                 />
