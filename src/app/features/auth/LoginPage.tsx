@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Navigate, useNavigate } from 'react-router'
 import { z } from 'zod'
-import { ArrowRightIcon, EyeIcon, EyeOffIcon, LockIcon, MailIcon, ShieldCheckIcon } from 'lucide-react'
+import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -53,59 +53,30 @@ export function LoginPage() {
   }
 
   return (
-    <main
-      className="relative min-h-screen w-full flex flex-col justify-between items-center p-4 sm:p-6 lg:p-8 font-sans antialiased overflow-x-hidden selection:bg-primary/20"
-      style={{
-        backgroundImage: `
-          radial-gradient(circle at 50% -5%, color-mix(in srgb, var(--primary) 18%, transparent) 0%, transparent 55%),
-          radial-gradient(circle at 10% 90%, color-mix(in srgb, var(--secondary) 12%, transparent) 0%, transparent 45%),
-          radial-gradient(circle at 90% 90%, color-mix(in srgb, var(--accent) 10%, transparent) 0%, transparent 45%)
-        `,
-      }}
-    >
+    <div className="min-h-screen w-full flex flex-col lg:grid lg:grid-cols-2 bg-white dark:bg-zinc-950">
       <div
-        className="pointer-events-none absolute inset-0 opacity-40 transition-opacity"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, color-mix(in srgb, var(--primary) 8%, transparent) 1px, transparent 1px),
-            linear-gradient(to bottom, color-mix(in srgb, var(--primary) 8%, transparent) 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px',
-          maskImage: 'radial-gradient(ellipse 75% 65% at 50% 45%, black 60%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at 50% 45%, black 60%, transparent 100%)',
-        }}
-      />
-
-      <div
-        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 sm:size-[520px] rounded-full blur-[140px] opacity-25 transition-all duration-700"
+        className="hidden lg:flex flex-col justify-center items-center p-12 text-center text-white relative"
         style={{ backgroundColor: 'var(--primary)' }}
-      />
+      >
+        <div className="max-w-md space-y-4">
+          <h2 className="text-3xl xl:text-4xl font-bold tracking-tight text-white">
+            Build Wealth with Confidence
+          </h2>
+          <p className="text-sm xl:text-base text-white/90 leading-relaxed">
+            Start investing in structured opportunities designed for long-term growth.
+          </p>
+        </div>
+      </div>
 
-      <div className="relative z-10 w-full max-w-[420px] my-auto py-8">
-        <div className="relative rounded-2xl border border-border/80 bg-card/90 backdrop-blur-xl shadow-xl shadow-primary/5 p-6 sm:p-8">
-          <div
-            className="absolute inset-x-6 top-0 h-0.5 rounded-t-full opacity-80"
-            style={{
-              background: `linear-gradient(90deg, transparent, var(--primary), transparent)`,
-            }}
-          />
-
-          <div className="flex flex-col items-center text-center mb-6">
-            <div
-              className="flex size-14 items-center justify-center rounded-2xl border mb-3 shadow-2xs transition-transform duration-200 hover:scale-105"
-              style={{
-                borderColor: `color-mix(in srgb, var(--primary) 25%, var(--border))`,
-                backgroundColor: `color-mix(in srgb, var(--primary) 8%, transparent)`,
-              }}
-            >
-              <TenantLogo className="h-7 w-auto object-contain" />
-            </div>
-
-            <h1 className="text-xl font-semibold tracking-tight text-foreground">
+      <div className="flex-1 flex flex-col justify-center items-center p-6 sm:p-12 lg:p-16 bg-white dark:bg-zinc-950">
+        <div className="w-full max-w-md">
+          <div className="mb-8">
+            <TenantLogo className="h-9 w-auto object-contain mb-6" />
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
               Sign in to {name}
             </h1>
-            <p className="text-xs text-muted-foreground mt-1">
-              Institutional lending portal & borrower self-service
+            <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1.5">
+              Enter your details to sign in to your account
             </p>
           </div>
 
@@ -114,69 +85,69 @@ export function LoginPage() {
             className="flex flex-col gap-4"
             noValidate
           >
-            <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs">
-                Email address
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-xs font-normal text-gray-600 dark:text-zinc-300">
+                Email Address
               </Label>
-              <div className="relative">
-                <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
-                <Input
-                  id="email"
-                  type="email"
-                  autoComplete="username"
-                  placeholder="name@institution.com"
-                  className="h-10 pl-9.5 text-xs transition-colors focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary"
-                  aria-invalid={!!errors.email}
-                  {...register('email')}
-                />
-              </div>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="username"
+                placeholder="you@example.com"
+                className="h-11 rounded-lg bg-[#f0f4f9] dark:bg-zinc-900 border-0 px-4 text-sm text-gray-900 dark:text-white focus-visible:ring-1 focus-visible:ring-primary shadow-none"
+                aria-invalid={!!errors.email}
+                {...register('email')}
+              />
               {errors.email && (
-                <span role="alert" className="text-[11px] text-destructive block mt-1">
+                <span role="alert" className="text-xs text-destructive block">
                   {errors.email.message}
                 </span>
               )}
             </div>
 
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-xs">
-                  Password
-                </Label>
-                <span className="text-[11px] text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
-                  Forgot password?
-                </span>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-xs font-normal text-gray-600 dark:text-zinc-300">
+                Password
+              </Label>
               <div className="relative">
-                <LockIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
-                  placeholder="••••••••••••"
-                  className="h-10 pl-9.5 pr-10 text-xs transition-colors focus-visible:ring-1 focus-visible:ring-primary focus-visible:border-primary"
+                  placeholder="••••••••"
+                  className="h-11 rounded-lg bg-[#f0f4f9] dark:bg-zinc-900 border-0 px-4 pr-10 text-sm text-gray-900 dark:text-white focus-visible:ring-1 focus-visible:ring-primary shadow-none"
                   aria-invalid={!!errors.password}
                   {...register('password')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 cursor-pointer"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
                 </button>
               </div>
               {errors.password && (
-                <span role="alert" className="text-[11px] text-destructive block mt-1">
+                <span role="alert" className="text-xs text-destructive block">
                   {errors.password.message}
                 </span>
               )}
             </div>
 
+            <div className="flex justify-end">
+              <span
+                className="text-xs font-medium hover:underline cursor-pointer"
+                style={{ color: 'var(--primary)' }}
+              >
+                Forgot Password?
+              </span>
+            </div>
+
             {mutation.error && (
               <div
                 role="alert"
-                className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+                className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive"
               >
                 {mutation.error.message}
               </div>
@@ -184,22 +155,28 @@ export function LoginPage() {
 
             <Button
               type="submit"
-              size="default"
-              className="h-10 w-full text-xs font-medium cursor-pointer shadow-sm active:scale-[0.99] transition-all mt-1"
+              className="h-11 w-full rounded-lg text-sm font-medium cursor-pointer shadow-none transition-opacity hover:opacity-90 mt-1"
+              style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-foreground)' }}
               disabled={mutation.isPending}
             >
               {mutation.isPending ? 'Signing in…' : 'Sign in'}
             </Button>
 
-            {accounts.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-border/70 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-                    Quick Demo Access
-                  </span>
-                  <span className="text-[10px] text-muted-foreground/80">Click to fill</span>
-                </div>
+            <p className="text-center text-xs text-gray-500 dark:text-zinc-400 mt-2">
+              Don't Have An Account?{' '}
+              <span
+                className="font-medium hover:underline cursor-pointer"
+                style={{ color: 'var(--primary)' }}
+              >
+                Create Account
+              </span>
+            </p>
 
+            {accounts.length > 0 && (
+              <div className="mt-6 pt-5 border-t border-gray-100 dark:border-zinc-800 space-y-2">
+                <p className="text-[11px] font-medium text-gray-400 dark:text-zinc-500">
+                  Demo accounts:
+                </p>
                 <div className="grid grid-cols-2 gap-2">
                   {accounts.map((account) => {
                     const isAdmin = account.role === 'lender_admin'
@@ -208,22 +185,12 @@ export function LoginPage() {
                         key={account.email}
                         type="button"
                         onClick={() => selectDemoAccount(account)}
-                        className="group relative flex flex-col items-start p-2.5 rounded-lg border border-border/80 bg-background/60 hover:bg-muted/80 hover:border-primary/40 text-left transition-all cursor-pointer"
+                        className="flex flex-col items-start p-2.5 rounded-lg border border-gray-200 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-900/60 hover:bg-gray-100 dark:hover:bg-zinc-800 text-left transition-colors cursor-pointer"
                       >
-                        <div className="flex items-center justify-between w-full mb-1">
-                          <span
-                            className={`text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded ${
-                              isAdmin ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
-                            }`}
-                          >
-                            {isAdmin ? 'Admin' : 'Borrower'}
-                          </span>
-                          <ArrowRightIcon className="size-3 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
-                        </div>
-                        <span className="text-xs font-medium text-foreground">
+                        <span className="text-xs font-semibold text-gray-800 dark:text-zinc-200">
                           {isAdmin ? 'Lender Admin' : 'Borrower'}
                         </span>
-                        <span className="text-[10px] text-muted-foreground font-mono truncate w-full mt-0.5">
+                        <span className="text-[11px] text-gray-500 dark:text-zinc-400 font-mono truncate w-full mt-0.5">
                           {account.email}
                         </span>
                       </button>
@@ -233,18 +200,12 @@ export function LoginPage() {
               </div>
             )}
           </form>
+
+          <p className="text-center text-[11px] text-gray-400 dark:text-zinc-600 mt-8 font-mono">
+            {slug} · {name}
+          </p>
         </div>
       </div>
-
-      <footer className="relative z-10 w-full max-w-4xl text-center py-4 text-xs text-muted-foreground flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-border/40">
-        <div className="flex items-center gap-2 text-[11px]">
-          <ShieldCheckIcon className="size-3.5 text-primary" />
-          <span>Multi-tenant encrypted lending infrastructure</span>
-        </div>
-        <div className="text-[11px] text-muted-foreground/70 font-mono">
-          {slug} · {name}
-        </div>
-      </footer>
-    </main>
+    </div>
   )
 }
