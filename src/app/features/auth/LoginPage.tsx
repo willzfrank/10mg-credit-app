@@ -60,10 +60,10 @@ export function LoginPage() {
       >
         <div className="max-w-md space-y-4">
           <h2 className="text-3xl xl:text-4xl font-bold tracking-tight text-white">
-            Build Wealth with Confidence
+            Access Credit with Confidence
           </h2>
           <p className="text-sm xl:text-base text-white/90 leading-relaxed">
-            Start investing in structured opportunities designed for long-term growth.
+            Apply in minutes, track your repayments, and manage your credit easily.
           </p>
         </div>
       </div>
