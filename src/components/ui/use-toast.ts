@@ -62,11 +62,17 @@ function reducer(state: State, action: Action): State {
       const { toastId } = action
 
       if (toastId) {
+        if (toastTimeouts.has(toastId)) {
+          clearTimeout(toastTimeouts.get(toastId))
+          toastTimeouts.delete(toastId)
+        }
         return {
           ...state,
           toasts: state.toasts.filter((t) => t.id !== toastId),
         }
       }
+      toastTimeouts.forEach((timeout) => clearTimeout(timeout))
+      toastTimeouts.clear()
       return {
         ...state,
         toasts: [],
@@ -74,10 +80,16 @@ function reducer(state: State, action: Action): State {
     }
     case "REMOVE_TOAST":
       if (action.toastId === undefined) {
+        toastTimeouts.forEach((timeout) => clearTimeout(timeout))
+        toastTimeouts.clear()
         return {
           ...state,
           toasts: [],
         }
+      }
+      if (toastTimeouts.has(action.toastId)) {
+        clearTimeout(toastTimeouts.get(action.toastId))
+        toastTimeouts.delete(action.toastId)
       }
       return {
         ...state,
@@ -153,3 +165,4 @@ toast.primary = (title: React.ReactNode, description?: React.ReactNode) =>
 
 toast.dismiss = (toastId?: string) =>
   dispatch({ type: "DISMISS_TOAST", toastId })
+

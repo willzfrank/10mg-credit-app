@@ -12,7 +12,7 @@ const ToastViewport = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "fixed top-4 right-4 z-50 flex max-h-screen w-full max-w-[380px] flex-col-reverse gap-2 pointer-events-none sm:top-auto sm:bottom-4",
+      "fixed bottom-0 right-0 z-50 flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-4 sm:right-4 sm:max-w-[380px] pointer-events-none gap-2",
       className
     )}
     {...props}
@@ -48,10 +48,12 @@ const Toast = React.forwardRef<
       onDismiss?: () => void
     }
 >(({ className, variant, onDismiss, children, ...props }, ref) => {
+  const isDestructive = variant === "destructive"
   return (
     <div
       ref={ref}
-      role="status"
+      role={isDestructive ? "alert" : "status"}
+      aria-live={isDestructive ? "assertive" : "polite"}
       className={cn(toastVariants({ variant }), className)}
       {...props}
     >
@@ -60,7 +62,7 @@ const Toast = React.forwardRef<
         <button
           type="button"
           onClick={onDismiss}
-          className="text-muted-foreground/70 hover:text-foreground shrink-0 rounded p-0.5 transition-colors cursor-pointer"
+          className="opacity-70 hover:opacity-100 shrink-0 rounded p-0.5 transition-opacity cursor-pointer focus:outline-none"
           aria-label="Close toast"
         >
           <XIcon className="size-3.5" />
@@ -119,3 +121,4 @@ export {
   ToastAction,
   toastVariants,
 }
+

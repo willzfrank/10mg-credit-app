@@ -66,6 +66,9 @@ export function LoginPage() {
         style={{ backgroundColor: 'var(--primary)' }}
       >
         <div className="max-w-md space-y-4">
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium bg-accent text-accent-foreground border border-accent/40 mb-2">
+            <span>Institutional Lending Gateway</span>
+          </div>
           <h2 className="text-3xl xl:text-4xl font-bold tracking-tight text-white">
             Access Credit with Confidence
           </h2>
@@ -185,7 +188,7 @@ export function LoginPage() {
                         onClick={() => selectDemoAccount(account)}
                         className={`flex flex-col items-start p-2.5 rounded-lg border text-left transition-colors cursor-pointer ${
                           isAdmin
-                            ? 'border-border bg-muted/40 hover:bg-muted'
+                            ? 'border-primary/30 bg-primary/10 hover:bg-primary/20 text-foreground'
                             : 'border-secondary/40 bg-secondary/30 hover:bg-secondary/60 text-secondary-foreground'
                         }`}
                       >
