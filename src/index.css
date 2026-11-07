@@ -95,7 +95,6 @@
     @apply outline-2 outline-offset-2 outline-primary;
     }
 
-  /* Modern autofill override to eliminate browser blue/yellow boxes */
   input:-webkit-autofill,
   input:-webkit-autofill:hover, 
   input:-webkit-autofill:focus,

@@ -81,7 +81,6 @@ function ColorField({
   )
 }
 
-/** Shows the logo being edited; falls back to a brand-coloured dot while it is empty or fails to load. */
 function PreviewLogo({ src }: { src: string | undefined }) {
   const [failed, setFailed] = useState(false)
   if (!src || failed) return <span className="size-2 rounded-full bg-primary" />
@@ -156,14 +155,11 @@ export function TenantConfigPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header */}
       <PageHeader title="Institution settings" description={<>Configure white-label branding and lending parameters for {tenant.name}.</>} />
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6" noValidate>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column: Form Controls (7 cols) */}
           <div className="lg:col-span-7 flex flex-col gap-6">
-            {/* Branding Card */}
             <Card className="border border-border bg-card shadow-2xs">
               <CardHeader className="pb-3 border-b border-border">
                 <CardTitle className="text-sm font-semibold">
@@ -215,7 +211,6 @@ export function TenantConfigPage() {
                   )}
                 </div>
 
-                {/* Color Presets */}
                 <div className="flex flex-col gap-1.5 pt-1">
                   <span className="text-[11px] text-muted-foreground">Color Presets:</span>
                   <div className="flex flex-wrap gap-1.5">
@@ -274,7 +269,6 @@ export function TenantConfigPage() {
               </CardContent>
             </Card>
 
-            {/* Loan Settings Card */}
             <Card className="border border-border bg-card shadow-2xs">
               <CardHeader className="pb-3 border-b border-border">
                 <CardTitle className="text-sm font-semibold">
@@ -365,8 +359,6 @@ export function TenantConfigPage() {
             </div>
           </div>
 
-          {/* Right Column: Live Portal & Branding Preview (5 cols) */}
-          {/* On mobile the preview comes first so changes are visible right away */}
           <div className="order-first lg:order-none lg:col-span-5 flex flex-col gap-4">
             <Card className="border border-border bg-card shadow-2xs lg:sticky lg:top-20">
               <CardHeader className="p-4 border-b border-border bg-muted/30">
@@ -383,7 +375,6 @@ export function TenantConfigPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-4 flex flex-col gap-4">
-                {/* Mock Card Preview */}
                 <div className="rounded-lg border border-border bg-background p-4 shadow-2xs flex flex-col gap-3">
                   <div className="flex items-center justify-between border-b border-border/60 pb-2.5">
                     <div className="flex items-center gap-2">
@@ -424,7 +415,6 @@ export function TenantConfigPage() {
                   </div>
                 </div>
 
-                {/* Active CSS Custom Properties summary */}
                 <div className="rounded bg-muted/30 p-2.5 text-xs text-muted-foreground border border-border/60">
                   <span className="text-[11px] font-medium text-foreground uppercase tracking-wider block mb-1">
                     CSS Variables:

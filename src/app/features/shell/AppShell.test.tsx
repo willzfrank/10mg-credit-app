@@ -23,15 +23,12 @@ describe('AppShell sign out', () => {
 
     expect(await screen.findByRole('heading', { name: 'Dashboard' })).not.toBeNull()
 
-    // Find the user profile button
     const userButton = screen.getByText('Ada Obi')
     fireEvent.click(userButton)
 
-    // Find the Sign out item
     const signOutButton = await screen.findByText('Sign out')
     fireEvent.click(signOutButton)
 
-    // Check if Sign in heading appears
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /Sign in to/ })).not.toBeNull()
     })

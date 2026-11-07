@@ -99,7 +99,6 @@ export function ApplicationsPanel() {
 
   return (
     <div className="flex flex-col gap-3.5">
-      {/* Controls Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
         <div className="relative max-w-xs w-full">
           <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground pointer-events-none" />
@@ -180,7 +179,6 @@ export function ApplicationsPanel() {
 
           return (
             <>
-              {/* Desktop Table View */}
               <TableCard>
                 <Table>
                   <TableHeader className="bg-muted/40 border-b border-border">
@@ -220,7 +218,6 @@ export function ApplicationsPanel() {
                 </Table>
               </TableCard>
 
-              {/* Mobile Card View */}
               <ul className="flex flex-col gap-2.5 md:hidden">
                 {rows.map((l) => (
                   <li
@@ -284,7 +281,6 @@ export function CustomersPanel() {
 
           return (
             <>
-              {/* Desktop Table */}
               <TableCard>
                 <Table>
                   <TableHeader className="bg-muted/40 border-b border-border">
@@ -310,7 +306,6 @@ export function CustomersPanel() {
                 </Table>
               </TableCard>
 
-              {/* Mobile Cards */}
               <ul className="flex flex-col gap-2.5 md:hidden">
                 {rows.map((c) => (
                   <li key={c.id} className="rounded-md border border-border bg-card p-3 shadow-2xs">
@@ -374,7 +369,6 @@ export function RepaymentsPanel() {
 
           return (
             <>
-              {/* Desktop Table */}
               <TableCard>
                 <Table>
                   <TableHeader className="bg-muted/40 border-b border-border">
@@ -406,7 +400,6 @@ export function RepaymentsPanel() {
                 </Table>
               </TableCard>
 
-              {/* Mobile Cards */}
               <ul className="flex flex-col gap-2.5 md:hidden">
                 {rows.map((r) => (
                   <li key={r.id} className="rounded-md border border-border bg-card p-3 shadow-2xs">

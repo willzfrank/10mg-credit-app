@@ -27,7 +27,7 @@ describe('dashboard authorization', () => {
       applications: 2,
       customers: 3,
       approvedLoans: 3,
-      outstandingMinor: 52_700_000, // 11,675,000 + 15,675,000 + 25,350,000 kobo
+      outstandingMinor: 52_700_000,
     })
     expect((await getDashboardSummary(zenith)).customers).toBe(3)
 

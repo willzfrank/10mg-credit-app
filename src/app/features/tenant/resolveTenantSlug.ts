@@ -1,7 +1,7 @@
 import { DEMO_TENANTS } from '../../mocks/tenants'
 import { tenantSlugSchema } from './types'
 
-export const DEFAULT_TENANT: string = DEMO_TENANTS[0].slug || "acme"
+export const DEFAULT_TENANT: string = DEMO_TENANTS[0]?.slug ?? 'acme'
 
 const BASE_DOMAIN: string | undefined = "example.com"
 const STORAGE_KEY = 'tenant-slug'
@@ -41,12 +41,14 @@ function storeSlug(storage: SlugStorage | undefined, slug: string) {
   try {
     storage?.setItem(STORAGE_KEY, slug)
   } catch {
-    // storage unavailable: the slug is simply not remembered
+    return
   }
 }
 
 export function resolveTenantSlug(
-  location: Pick<Location, 'hostname' | 'search'> = window.location,
+  location: Pick<Location, 'hostname' | 'search'> = typeof window !== 'undefined'
+    ? window.location
+    : { hostname: '', search: '' },
   baseDomain: string | undefined = BASE_DOMAIN,
   storage: SlugStorage | undefined = getSessionStorage(),
 ): string {

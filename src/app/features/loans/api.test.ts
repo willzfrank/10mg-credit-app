@@ -99,7 +99,6 @@ describe('customer ownership and idempotency', () => {
 })
 
 describe('makeRepayment', () => {
-  // loan_acme_1: total payable 15,675,000 minus 4,000,000 already paid = 11,675,000 outstanding.
   it('records a repayment and reduces the outstanding balance', async () => {
     const { accessToken } = await login('acme', customer)
     const repayment = await makeRepayment(accessToken, 'loan_acme_1', { amountMinor: 1_000_000 })

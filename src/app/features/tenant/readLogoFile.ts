@@ -2,7 +2,6 @@ import { MAX_LOGO_BYTES } from './configFormSchema'
 
 const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/svg+xml']
 
-/** Validates a chosen logo file and returns it as a data URL. Rejects with a user-facing message. */
 export function readLogoFile(file: File): Promise<string> {
   if (!ALLOWED_TYPES.includes(file.type)) {
     return Promise.reject(new Error('Logo must be a PNG, JPEG, WebP, GIF or SVG image'))

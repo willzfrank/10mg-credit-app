@@ -89,7 +89,6 @@ export function LoanDetailsPage() {
 
         return (
           <div className="flex flex-col gap-6">
-            {/* Top Navigation Bar */}
             <PageHeader
               compact
               leading={
@@ -106,7 +105,6 @@ export function LoanDetailsPage() {
               actions={<StatusBadge status={l.status} />}
             />
 
-            {/* Repayment Progress (Stripe Capital style) */}
             {showOutstanding && (
               <Card className="border border-border bg-card shadow-2xs rounded-lg">
                 <CardContent className="p-4 sm:p-5 flex flex-col gap-3">
@@ -137,7 +135,6 @@ export function LoanDetailsPage() {
               </Card>
             )}
 
-            {/* Financial Parameters Grid */}
             <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
               <Detail label="Amount">{money(l.amountMinor)}</Detail>
               <Detail label="Tenor">{l.tenorMonths} months</Detail>
@@ -149,7 +146,6 @@ export function LoanDetailsPage() {
               <Detail label="Applied">{date(l.createdAt)}</Detail>
             </dl>
 
-            {/* Status Timeline */}
             <section
               aria-label="Status timeline"
               className="rounded-lg border border-border bg-card p-4 sm:p-5 shadow-2xs"
@@ -186,7 +182,6 @@ export function LoanDetailsPage() {
               <RepaymentForm loanId={l.id} outstandingMinor={outstanding} />
             )}
 
-            {/* Repayment History Section */}
             <section
               aria-label="Repayment history"
               className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 sm:p-5 shadow-2xs"
@@ -198,7 +193,6 @@ export function LoanDetailsPage() {
               <QueryBoundary query={repayments} isEmpty={(d) => d.length === 0} emptyText="No repayments yet.">
                 {(rows) => (
                   <>
-                    {/* Desktop Table */}
                     <TableCard>
                       <Table>
                         <TableHeader className="bg-muted/40 border-b border-border">
@@ -224,7 +218,6 @@ export function LoanDetailsPage() {
                       </Table>
                     </TableCard>
 
-                    {/* Mobile List */}
                     <ul className="flex flex-col gap-2 md:hidden">
                       {rows.map((r) => (
                         <li

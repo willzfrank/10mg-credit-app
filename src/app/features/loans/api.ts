@@ -6,7 +6,6 @@ import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '.
 import { outstandingMinor } from './money'
 
 export interface ApplicationInput {
-  /** Integer minor units (kobo / cents). */
   amountMinor: number
   tenorMonths: number
   idempotencyKey: string
@@ -42,14 +41,9 @@ export async function listLoans(token: string): Promise<MockLoan[]> {
 }
 
 export interface RepaymentInput {
-  /** Integer minor units (kobo / cents). */
   amountMinor: number
 }
 
-/**
- * Records a repayment on the caller's own approved loan. Overpaying is rejected, and the
- * repayment that clears the balance moves the loan to 'repaid'.
- */
 export async function makeRepayment(token: string, loanId: string, input: RepaymentInput): Promise<MockRepayment> {
   await delay()
   const owner = authenticateToken(token)

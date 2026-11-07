@@ -63,7 +63,6 @@ export function LoginPage() {
         `,
       }}
     >
-      {/* Precision architectural grid overlay tinted with company primary color */}
       <div
         className="pointer-events-none absolute inset-0 opacity-40 transition-opacity"
         style={{
@@ -77,16 +76,13 @@ export function LoginPage() {
         }}
       />
 
-      {/* Ambient company-branded radial aura behind the card */}
       <div
         className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 sm:size-[520px] rounded-full blur-[140px] opacity-25 transition-all duration-700"
         style={{ backgroundColor: 'var(--primary)' }}
       />
 
-      {/* Central Modern Minimalist Sign-In Card */}
       <div className="relative z-10 w-full max-w-[420px] my-auto py-8">
         <div className="relative rounded-2xl border border-border/80 bg-card/90 backdrop-blur-xl shadow-xl shadow-primary/5 p-6 sm:p-8">
-          {/* Company dynamic hairline accent on card top */}
           <div
             className="absolute inset-x-6 top-0 h-0.5 rounded-t-full opacity-80"
             style={{
@@ -94,7 +90,6 @@ export function LoginPage() {
             }}
           />
 
-          {/* Company Identity */}
           <div className="flex flex-col items-center text-center mb-6">
             <div
               className="flex size-14 items-center justify-center rounded-2xl border mb-3 shadow-2xs transition-transform duration-200 hover:scale-105"
@@ -114,13 +109,11 @@ export function LoginPage() {
             </p>
           </div>
 
-          {/* Sign In Form */}
           <form
             onSubmit={handleSubmit((values) => mutation.mutate(values))}
             className="flex flex-col gap-4"
             noValidate
           >
-            {/* Email Field */}
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-xs">
                 Email address
@@ -144,7 +137,6 @@ export function LoginPage() {
               )}
             </div>
 
-            {/* Password Field */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password" className="text-xs">
@@ -199,7 +191,6 @@ export function LoginPage() {
               {mutation.isPending ? 'Signing in…' : 'Sign in'}
             </Button>
 
-            {/* Quick demo access, driven by the tenant's demo accounts */}
             {accounts.length > 0 && (
               <div className="mt-4 pt-4 border-t border-border/70 space-y-2.5">
                 <div className="flex items-center justify-between">
@@ -245,7 +236,6 @@ export function LoginPage() {
         </div>
       </div>
 
-      {/* Minimalist Trust & Infrastructure Footer */}
       <footer className="relative z-10 w-full max-w-4xl text-center py-4 text-xs text-muted-foreground flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-border/40">
         <div className="flex items-center gap-2 text-[11px]">
           <ShieldCheckIcon className="size-3.5 text-primary" />

@@ -52,7 +52,6 @@ export function useMakeRepayment(loanId: string) {
   return useMutation({
     mutationFn: (input: RepaymentInput) => makeRepayment(scope.token!, loanId, input),
     meta: { tenantSlug: scope.slug },
-    // The loan list, details and repayments change here, and the lender dashboard totals change too.
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ['portal', scope.slug, scope.userId] }),

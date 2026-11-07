@@ -4,7 +4,6 @@ import { tenantColorFields, tenantName, tenantSettingsFormSchema } from './types
 
 const PAGE_BACKGROUND = '#ffffff'
 
-/** Uploaded logos are stored as data URLs; cap the encoded size so the mock store stays small. */
 export const MAX_LOGO_BYTES = 200 * 1024
 const LOGO_DATA_URL = /^data:image\/(png|jpeg|webp|gif|svg\+xml);base64,[a-z0-9+/]+=*$/i
 

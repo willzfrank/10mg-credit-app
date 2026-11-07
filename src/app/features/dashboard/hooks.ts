@@ -44,7 +44,6 @@ export function useDecideLoan() {
       decideLoan(scope.token!, loanId, decision),
     meta: { tenantSlug: scope.slug },
     onSuccess: refresh,
-    // Someone else decided first: show the message and pull the fresh state.
     onError: (error) => (error instanceof ConflictError ? refresh() : undefined),
   })
 }

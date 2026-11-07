@@ -90,7 +90,6 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
   return (
     <SidebarProvider>
       <Sidebar className="border-r border-border bg-sidebar">
-        {/* Sidebar Header with clean branding */}
         <SidebarHeader className="p-4 border-b border-border">
           <div className="flex items-center justify-between">
             <TenantLogo className="h-6 w-auto" />
@@ -100,7 +99,6 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
           </div>
         </SidebarHeader>
 
-        {/* Sidebar Navigation */}
         <SidebarContent className="px-2 py-3">
           <SidebarGroup>
             <SidebarGroupLabel className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-2.5 mb-1">
@@ -118,7 +116,6 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
           </SidebarGroup>
         </SidebarContent>
 
-        {/* Sidebar Footer with clean user profile dropdown */}
         <SidebarFooter className="p-3 border-t border-border">
           <DropdownMenu>
             <DropdownMenuTrigger
@@ -161,7 +158,6 @@ export function AppShell({ nav }: { nav: NavItem[] }) {
       </Sidebar>
 
       <SidebarInset className="bg-background min-h-screen flex flex-col">
-        {/* Minimalist Top App Header */}
         <header className="sticky top-0 z-20 flex h-13 items-center justify-between border-b border-border bg-background/95 px-4 sm:px-6 backdrop-blur-xs">
           <div className="flex items-center gap-3">
             <SidebarTrigger className="h-7 w-7 text-muted-foreground hover:text-foreground" />

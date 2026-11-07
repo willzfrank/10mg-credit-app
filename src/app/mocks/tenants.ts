@@ -31,22 +31,6 @@ const seedTenants: Record<string, TenantConfig> = {
       maxTenorMonths: 36,
     },
   },
-  // health10mg: {
-  //   id: 'tnt_003',
-  //   slug: 'health10mg',
-  //   name: '10mg health',
-  //   logoUrl: '/logos/zenith.svg',
-  //   colors: { primary: '#5b21b6', secondary: '#fb923c', accent: '#ede9fe' },
-  //   settings: {
-  //     currency: 'USD',
-  //     locale: 'en-US',
-  //     minLoanAmount: 500,
-  //     maxLoanAmount: 25000,
-  //     interestRate: 8,
-  //     maxTenorMonths: 36,
-  //   },
-  // },
-  
 }
 
 export const DEMO_TENANTS: { slug: string; name: string }[] = Object.values(seedTenants).map(({ slug, name }) => ({
@@ -69,10 +53,6 @@ export const demoAccounts: Record<string, DemoAccount[]> = {
     { role: 'lender_admin', email: 'zed@zenith.test', password: 'password123' },
     { role: 'customer', email: 'zoe@zenith.test', password: 'password123' },
   ],
-  //  health10mg: [
-  //   { role: 'lender_admin', email: 'lender@health10mg.test', password: 'password123' },
-  //   { role: 'customer', email: 'customer@health10mg.test', password: 'password123' },
-  // ],
 }
 
 export const mockTenants: Record<string, TenantConfig> = structuredClone(seedTenants)

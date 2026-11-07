@@ -1,7 +1,6 @@
 import { mockLoans, mockRepayments } from './db'
 import { mockTenants } from './tenants'
 
-// Functions (not top-level consts) because db.ts and this module import each other.
 const storageKey = () => '10mg:db:v1'
 const schemaVersion = () => 1
 
@@ -11,11 +10,10 @@ export function clearDb() {
   try {
     localStorage.removeItem(storageKey())
   } catch {
-    // Storage unavailable: nothing to clear.
+    return
   }
 }
 
-/** Hydrates the mock collections in place from storage. Returns false (leaving the seed untouched) on any problem. */
 export function loadDb(): boolean {
   try {
     const raw = localStorage.getItem(storageKey())
@@ -43,6 +41,6 @@ export function saveDb() {
       JSON.stringify({ version: schemaVersion(), loans: mockLoans, repayments: mockRepayments, tenants: mockTenants }),
     )
   } catch {
-    // Quota exceeded or storage disabled: the in-memory db stays authoritative.
+    return
   }
 }

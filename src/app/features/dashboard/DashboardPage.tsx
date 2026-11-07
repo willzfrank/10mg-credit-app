@@ -65,7 +65,6 @@ export function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header bar */}
       <PageHeader
         title="Dashboard"
         description="Applications, customers and repayments at a glance."
@@ -101,7 +100,6 @@ export function DashboardPage() {
         </div>
       )}
 
-      {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2 lg:grid-cols-4">
         <Kpi
           label="Pending applications"
@@ -129,7 +127,6 @@ export function DashboardPage() {
         />
       </div>
 
-      {/* Data Table Section */}
       <Card className="border border-border bg-card shadow-2xs rounded-lg overflow-hidden">
         <CardContent className="p-4 sm:p-5">
           <Tabs value={tab} onValueChange={(v) => setTab(v as TabId)} className="gap-5">

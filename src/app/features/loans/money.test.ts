@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { outstandingMinor, totalPayableMinor } from './money'
 
-// 150,000.00 NGN at 4.5% a year for 12 months = 15,000,000 kobo principal.
 const loan = { amountMinor: 15_000_000, ratePct: 4.5, tenorMonths: 12 }
 
 describe('loan money', () => {

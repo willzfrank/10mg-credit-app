@@ -77,7 +77,6 @@ export function ApplyPage() {
   const watchedAmount = useWatch({ control, name: 'amount' })
   const watchedTenor = useWatch({ control, name: 'tenorMonths' })
 
-  // Financial calculations for breakdown
   const validAmount = typeof watchedAmount === 'number' && !isNaN(watchedAmount) && watchedAmount > 0 ? watchedAmount : 0
   const validTenor = typeof watchedTenor === 'number' && !isNaN(watchedTenor) && watchedTenor > 0 ? watchedTenor : 0
 
@@ -96,7 +95,6 @@ export function ApplyPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header and Back navigation */}
       <div className="flex items-center justify-between pb-2 border-b border-border">
         <div className="flex items-center gap-3">
           <Link
@@ -116,13 +114,11 @@ export function ApplyPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Main Application Form (Left) */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           noValidate
           className="lg:col-span-7 flex flex-col gap-4 rounded-lg border border-border bg-card p-5 sm:p-6 shadow-2xs"
         >
-          {/* Amount Field */}
           <Label className="flex-col items-stretch gap-1.5 text-xs font-medium text-foreground">
             <div className="flex items-center justify-between">
               <span>Amount ({settings.currency})</span>
@@ -155,7 +151,6 @@ export function ApplyPage() {
             )}
           </Label>
 
-          {/* Tenor Field */}
           <Label className="flex-col items-stretch gap-1.5 text-xs font-medium text-foreground">
             <div className="flex items-center justify-between">
               <span>Tenor (months)</span>
@@ -190,7 +185,6 @@ export function ApplyPage() {
             </div>
           )}
 
-          {/* Actions */}
           <div className="flex items-center gap-3 pt-3 border-t border-border">
             <Button
               type="submit"
@@ -208,7 +202,6 @@ export function ApplyPage() {
           </div>
         </form>
 
-        {/* Financial Terms Breakdown Card (Right) */}
         <div className="lg:col-span-5 flex flex-col gap-4">
           <Card className="border border-border border-t-2 border-t-secondary bg-card shadow-2xs">
             <CardHeader className="p-4 border-b border-border bg-muted/30">

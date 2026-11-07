@@ -6,7 +6,6 @@ type Props = Omit<ComponentProps<typeof Input>, 'value' | 'onChange' | 'type'> &
   onValueChange: (value: number | undefined) => void
 }
 
-/** Groups the integer part with commas: "1234567.5" -> "1,234,567.5". Keeps a trailing dot while typing. */
 function group(raw: string): string {
   const [int, dec] = raw.split('.')
   const grouped = int.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -19,12 +18,10 @@ function sanitize(input: string): string {
   return rest.length ? `${int}.${rest.join('')}` : int
 }
 
-/** Text input that shows thousands separators while typing but reports a plain number. */
 export function AmountInput({ value, onValueChange, ...props }: Props) {
   const [text, setText] = useState(() => (value === undefined || Number.isNaN(value) ? '' : group(String(value))))
   const [lastValue, setLastValue] = useState(value)
 
-  // Sync when the form sets the value externally (e.g. "Pay full balance" or reset).
   if (value !== lastValue) {
     setLastValue(value)
     const current = text === '' ? undefined : Number(text.replace(/,/g, ''))

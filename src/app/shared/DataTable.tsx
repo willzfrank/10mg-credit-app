@@ -2,7 +2,6 @@ import type { ComponentProps, ReactNode } from 'react'
 import { TableHead } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 
-/** Bordered wrapper shown on desktop only; pair with a mobile card list. */
 export function TableCard({ children }: { children: ReactNode }) {
   return <div className="hidden rounded-md border border-border overflow-hidden bg-card md:block">{children}</div>
 }

@@ -22,7 +22,6 @@ export function MyLoansPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Page Header */}
       <PageHeader
         title="My loans"
         description="Active facilities, terms, and repayment history."
@@ -51,7 +50,6 @@ export function MyLoansPage() {
 
           return (
             <div className="flex flex-col gap-5">
-              {/* Clean Financial Metrics Bar (Stripe Capital style) */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 border border-border rounded-lg bg-card p-4">
                 <div className="flex flex-col gap-0.5 border-b sm:border-b-0 sm:border-r border-border pb-3 sm:pb-0 sm:pr-4">
                   <SectionLabel>
@@ -79,10 +77,8 @@ export function MyLoansPage() {
                 </div>
               </div>
 
-              {/* Loans List Card */}
               <Card className="border border-border bg-card shadow-2xs rounded-lg overflow-hidden">
                 <CardContent className="p-4 sm:p-5 flex flex-col gap-4">
-                  {/* Status filter bar */}
                   <div className="flex items-center justify-between border-b border-border pb-3">
                     <div className="flex items-center gap-1">
                       {(

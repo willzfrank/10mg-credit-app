@@ -57,8 +57,6 @@ export const mockUsers: MockUser[] = [
   seedUser('u_zenith_customer', 'zenith', 'Zoe Lin', 'zoe@zenith.test', 'customer'),
   seedUser('u_zenith_ravi', 'zenith', 'Ravi Shah', 'ravi@zenith.test', 'customer'),
   seedUser('u_zenith_mina', 'zenith', 'Mina Cole', 'mina@zenith.test', 'customer'),
-  // seedUser('u_health10mg_lender', 'health10mg', 'Lendcorp', 'lender@health10mg.test', 'lender_admin'),
-  // seedUser('u_health10mg_customer', 'health10mg', 'Patient', 'customer@health10mg.test', 'customer'),
 ] 
 
 const loan = (
@@ -152,7 +150,7 @@ function persistTokens() {
   try {
     sessionStorage.setItem(TOKENS_KEY, JSON.stringify([...tokens]))
   } catch {
-    // Ignore storage write errors (e.g. disabled storage or quota exceeded)
+    return
   }
 }
 
@@ -205,5 +203,4 @@ export function resetDb() {
   resetTenants()
 }
 
-// Restore persisted state over the seed, in place so the exported references never change.
 loadDb()

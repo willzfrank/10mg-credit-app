@@ -11,7 +11,6 @@ export function PageHeader({
   title: ReactNode
   description?: ReactNode
   actions?: ReactNode
-  /** Rendered before the title block, e.g. a back link. */
   leading?: ReactNode
   compact?: boolean
 }) {

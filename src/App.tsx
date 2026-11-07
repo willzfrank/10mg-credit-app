@@ -7,7 +7,6 @@ import { useSession } from './app/shared/auth/authStore'
 import { homePathFor } from './app/shared/auth/homePath'
 import { RequireRole } from './app/shared/auth/RequireRole'
 
-// Route-level code splitting: each page is fetched when first visited.
 const LoginPage = lazy(() => import('./app/features/auth/LoginPage').then((m) => ({ default: m.LoginPage })))
 const DashboardPage = lazy(() => import('./app/features/dashboard/DashboardPage').then((m) => ({ default: m.DashboardPage })))
 const TenantConfigPage = lazy(() => import('./app/features/tenant/TenantConfigPage').then((m) => ({ default: m.TenantConfigPage })))

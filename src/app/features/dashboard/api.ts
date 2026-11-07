@@ -6,7 +6,6 @@ import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '.
 import { outstandingMinor } from '../loans/money'
 
 interface DashboardSummary {
-  /** Applications awaiting a decision (loans with status 'pending'). */
   applications: number
   customers: number
   approvedLoans: number
